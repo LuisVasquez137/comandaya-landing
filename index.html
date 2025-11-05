@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ComandaYa - Sistema de gestión de restaurantes con IA. Toma de pedidos, control de cocina y marketplace inteligente de proveedores.">
+    <meta name="keywords" content="restaurante, gestión, pedidos, cocina, marketplace, proveedores, IA, Guatemala">
+    <title>ComandaYa - Gestión Inteligente para tu Restaurante</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="logo">
+                    <img src="logo.jpg" alt="ComandaYa Logo" class="logo-img">
+                    <span class="logo-text">ComandaYa</span>
+                </div>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="#inicio">Inicio</a></li>
+                    <li><a href="#caracteristicas">Características</a></li>
+                    <li><a href="#video">Demo</a></li>
+                    <li><a href="#galeria">Galería</a></li>
+                    <li><a href="#contacto">Contacto</a></li>
+                </ul>
+                <a href="https://play.google.com/store/apps/details?id=com.aplicacion.orderapp" target="_blank" rel="noopener noreferrer" class="cta-button">Descargar App</a>
+                <div class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="inicio">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1 class="hero-title">
+                        Gestiona tu restaurante con <span class="highlight">Inteligencia Artificial</span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        La plataforma todo-en-uno que revoluciona la forma de operar tu restaurante. 
+                        Toma de pedidos, control de cocina y marketplace inteligente en una sola app.
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="https://play.google.com/store/apps/details?id=com.aplicacion.orderapp" target="_blank" rel="noopener noreferrer" class="btn-primary">Descargar Ahora</a>
+                        <a href="#video" class="btn-secondary">Ver Demo</a>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <span class="stat-number">3x</span>
+                            <span class="stat-label">Más rápido</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">100%</span>
+                            <span class="stat-label">Sin errores</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">50+</span>
+                            <span class="stat-label">Restaurantes</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <div class="phone-mockup">
+                        <img src="screenshot_orden.png" alt="ComandaYa App" class="app-screenshot">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-wave">
+            <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 0L60 10C120 20 240 40 360 46.7C480 53 600 47 720 43.3C840 40 960 40 1080 46.7C1200 53 1320 67 1380 73.3L1440 80V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0V0Z" fill="white"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Diferenciadores Clave -->
+    <section class="diferenciadores">
+        <div class="container">
+            <h2 class="section-title">¿Por qué ComandaYa?</h2>
+            <p class="section-subtitle">Tres razones que nos hacen únicos en el mercado</p>
+            
+            <div class="diferenciadores-grid">
+                <div class="diferenciador-card">
+                    <div class="diferenciador-icon">
+                        <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                        </svg>
+                    </div>
+                    <h3>Facilidad de Uso</h3>
+                    <p>Interfaz intuitiva que tu equipo aprende en minutos. Sin curvas de aprendizaje complicadas, sin capacitaciones eternas.</p>
+                </div>
+
+                <div class="diferenciador-card featured">
+                    <div class="badge">Revolucionario</div>
+                    <div class="diferenciador-icon">
+                        <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 16v-4M12 8h.01"/>
+                        </svg>
+                    </div>
+                    <h3>Marketplace con IA</h3>
+                    <p>Nuestra inteligencia artificial conecta tu restaurante con proveedores cercanos, comparando precios automáticamente y sugiriendo las mejores opciones.</p>
+                </div>
+
+                <div class="diferenciador-card">
+                    <div class="diferenciador-icon">
+                        <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                    </div>
+                    <h3>Tiempos en Tiempo Real</h3>
+                    <p>Sistema inteligente que calcula y muestra tiempos de preparación exactos. Tu cocina siempre sincronizada, tus clientes siempre informados.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Demo -->
+    <section class="video-section" id="video">
+        <div class="container">
+            <h2 class="section-title">Mira ComandaYa en acción</h2>
+            <p class="section-subtitle">Descubre cómo funciona en menos de 2 minutos</p>
+            
+            <div class="video-container">
+                <a href="https://www.youtube.com/watch?v=a_PVqAfoIj0" target="_blank" rel="noopener noreferrer" class="video-thumbnail">
+                    <img src="https://img.youtube.com/vi/a_PVqAfoIj0/maxresdefault.jpg" alt="ComandaYa Demo Video" class="video-img">
+                    <div class="play-button">
+                        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                            <circle cx="40" cy="40" r="40" fill="rgba(255, 193, 7, 0.95)"/>
+                            <path d="M32 25L57 40L32 55V25Z" fill="#1a1a1a"/>
+                        </svg>
+                    </div>
+                    <div class="video-overlay">
+                        <span class="video-text">▶ Ver Demo en YouTube</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Características Detalladas -->
+    <section class="caracteristicas" id="caracteristicas">
+        <div class="container">
+            <h2 class="section-title">Todo lo que necesitas en una app</h2>
+            
+            <div class="caracteristicas-grid">
+                <div class="caracteristica-item">
+                    <div class="feature-image">
+                        <img src="screenshot_orden.png" alt="Toma de pedidos">
+                    </div>
+                    <div class="feature-content">
+                        <h3>Toma de Pedidos Inteligente</h3>
+                        <p>Captura pedidos de forma rápida y precisa. Sistema de categorías, búsqueda instantánea y visualización de disponibilidad en tiempo real.</p>
+                        <ul class="feature-list">
+                            <li>✓ Búsqueda rápida de platillos</li>
+                            <li>✓ Categorización intuitiva</li>
+                            <li>✓ Estado de disponibilidad</li>
+                            <li>✓ Modificadores y extras</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="caracteristica-item reverse">
+                    <div class="feature-image">
+                        <img src="screenshot_home.png" alt="Control de cocina">
+                    </div>
+                    <div class="feature-content">
+                        <h3>Control Total de tu Cocina</h3>
+                        <p>Visualiza todas las órdenes activas, gestiona mesas y tiempos de espera. Tu cocina siempre organizada y eficiente.</p>
+                        <ul class="feature-list">
+                            <li>✓ Dashboard en tiempo real</li>
+                            <li>✓ Gestión de mesas</li>
+                            <li>✓ Tiempos de preparación</li>
+                            <li>✓ Priorización automática</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="caracteristica-item">
+                    <div class="feature-image">
+                        <img src="screenshot_marketplace.png" alt="Marketplace">
+                    </div>
+                    <div class="feature-content">
+                        <h3>Marketplace Inteligente</h3>
+                        <p>Encuentra proveedores cercanos, compara precios y realiza pedidos. La IA te recomienda las mejores opciones basándose en calidad, precio y cercanía.</p>
+                        <ul class="feature-list">
+                            <li>✓ Búsqueda geolocalizada</li>
+                            <li>✓ Comparación de precios</li>
+                            <li>✓ Recomendaciones con IA</li>
+                            <li>✓ Pedidos directos a proveedores</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="benefits">
+        <div class="container">
+            <h2 class="section-title">Beneficios reales para tu negocio</h2>
+            
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">📊</div>
+                    <h4>Reduce costos</h4>
+                    <p>Ahorra hasta un 30% en compras gracias al marketplace comparador</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">⚡</div>
+                    <h4>Aumenta velocidad</h4>
+                    <p>Procesa pedidos 3x más rápido que con métodos tradicionales</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">❌</div>
+                    <h4>Elimina errores</h4>
+                    <p>Adiós a los pedidos mal tomados o extraviados</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">😊</div>
+                    <h4>Mejora satisfacción</h4>
+                    <p>Clientes más felices con tiempos precisos y servicio ágil</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">📈</div>
+                    <h4>Crece tu negocio</h4>
+                    <p>Reportes y análisis para tomar mejores decisiones</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">🔒</div>
+                    <h4>Datos seguros</h4>
+                    <p>Toda tu información protegida en la nube</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Galería de Screenshots -->
+    <section class="galeria" id="galeria">
+        <div class="container">
+            <h2 class="section-title">La app en detalle</h2>
+            <p class="section-subtitle">Explora cada funcionalidad</p>
+            
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="screenshot_home.png" alt="Pantalla principal">
+                    <div class="gallery-overlay">
+                        <h4>Pantalla Principal</h4>
+                        <p>Vista general de tu restaurante</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item">
+                    <img src="screenshot_orden.png" alt="Nueva orden">
+                    <div class="gallery-overlay">
+                        <h4>Toma de Pedidos</h4>
+                        <p>Interfaz rápida e intuitiva</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item">
+                    <img src="screenshot_marketplace.png" alt="Marketplace">
+                    <div class="gallery-overlay">
+                        <h4>Marketplace IA</h4>
+                        <p>Encuentra proveedores inteligentemente</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <div class="container">
+            <h2 class="section-title">Lo que dicen nuestros clientes</h2>
+            
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="testimonial-text">"ComandaYa transformó completamente nuestro restaurante. El marketplace nos ha ahorrado miles de quetzales comparando proveedores."</p>
+                    <div class="testimonial-author">
+                        <strong>María González</strong>
+                        <span>Restaurante El Sabor</span>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="testimonial-text">"La facilidad de uso es increíble. Mis meseros se adaptaron en un día y ahora no podemos trabajar sin ComandaYa."</p>
+                    <div class="testimonial-author">
+                        <strong>Carlos Méndez</strong>
+                        <span>Pizzería Don Carlos</span>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="testimonial-text">"El sistema de tiempos en cocina es un cambio total. Ya no hay confusiones y los clientes están más satisfechos."</p>
+                    <div class="testimonial-author">
+                        <strong>Ana Rodríguez</strong>
+                        <span>Café Artesanal</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section" id="contacto">
+        <div class="container">
+            <div class="cta-content">
+                <h2>¿Listo para revolucionar tu restaurante?</h2>
+                <p>Únete a los restaurantes más exitosos de Guatemala</p>
+                <div class="cta-buttons">
+                    <a href="https://play.google.com/store/apps/details?id=com.aplicacion.orderapp" target="_blank" rel="noopener noreferrer" class="btn-primary-large">Descargar Gratis</a>
+                    <a href="#contacto" class="btn-secondary-large">Solicitar Demo</a>
+                </div>
+                <p class="cta-note">✓ Sin compromiso  ✓ Setup en minutos  ✓ Soporte en español</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="logo.jpg" alt="ComandaYa">
+                        <span>ComandaYa</span>
+                    </div>
+                    <p>Gestión inteligente para restaurantes del futuro</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Producto</h4>
+                    <ul>
+                        <li><a href="#caracteristicas">Características</a></li>
+                        <li><a href="#video">Demo</a></li>
+                        <li><a href="#">Precios</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Empresa</h4>
+                    <ul>
+                        <li><a href="#">Sobre nosotros</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Contacto</a></li>
+                        <li><a href="#">Términos</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Contacto</h4>
+                    <ul>
+                        <li>📧 comandayalatam.@gmail.com</li>
+                        <li>📱 +502 3474-9466</li>
+                        <li>📍 Guatemala, Guatemala</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 ComandaYa. Todos los derechos reservados.</p>
+                <div class="social-links">
+                    <a href="#" aria-label="Facebook">FB</a>
+                    <a href="#" aria-label="Instagram">IG</a>
+                    <a href="#" aria-label="Twitter">TW</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
