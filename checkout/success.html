@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Pago Exitoso! - ComandaYa</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #FFC107 0%, #FFD54F 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .success-container {
+            background: white;
+            border-radius: 16px;
+            padding: 48px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-icon {
+            width: 120px;
+            height: 120px;
+            background: #4CAF50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 32px;
+            animation: scaleIn 0.6s ease 0.2s both;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .success-icon svg {
+            width: 60px;
+            height: 60px;
+            stroke: white;
+            stroke-width: 3;
+            fill: none;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: #1a1a1a;
+            margin-bottom: 16px;
+        }
+
+        p {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+
+        .info-box {
+            background: #f5f5f5;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 32px;
+            text-align: left;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .info-value {
+            color: #666;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 200px;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #FFC107;
+            color: #1a1a1a;
+        }
+
+        .btn-primary:hover {
+            background: #FFB300;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 193, 7, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #1a1a1a;
+            border: 2px solid #1a1a1a;
+        }
+
+        .btn-secondary:hover {
+            background: #1a1a1a;
+            color: white;
+        }
+
+        .support-text {
+            margin-top: 32px;
+            font-size: 14px;
+            color: #999;
+        }
+
+        .support-text a {
+            color: #FFC107;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .success-container {
+                padding: 32px 24px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-icon">
+            <svg viewBox="0 0 24 24">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+        </div>
+
+        <h1>¡Pago Exitoso!</h1>
+        <p>Tu suscripción a ComandaYa ha sido activada correctamente. Ya puedes disfrutar de todas las funcionalidades premium de tu plan.</p>
+
+        <div class="info-box" id="subscription-info">
+            <div class="info-row">
+                <span class="info-label">Estado:</span>
+                <span class="info-value" style="color: #4CAF50; font-weight: 600;">✓ Activo</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Plan:</span>
+                <span class="info-value" id="plan-name">Cargando...</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Facturación:</span>
+                <span class="info-value" id="billing-cycle">Cargando...</span>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <a href="https://play.google.com/store/apps/details?id=com.aplicacion.orderapp" target="_blank" class="btn btn-primary">
+                <span>📱</span>
+                <span>Abrir la App</span>
+            </a>
+            <a href="https://comandaya.com" class="btn btn-secondary">
+                <span>← Volver al Inicio</span>
+            </a>
+        </div>
+
+        <p class="support-text">
+            ¿Necesitas ayuda? <a href="https://wa.me/50234749466">Contáctanos por WhatsApp</a>
+        </p>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Configuración de Firebase (la misma que en checkout.js)
+        const firebaseConfig = {
+  apiKey: "AIzaSyD0if0ACDfngNzhthGAW_NHcHOikqvIXdo",
+  authDomain: "orderapp-e0c31.firebaseapp.com",
+  projectId: "orderapp-e0c31",
+  storageBucket: "orderapp-e0c31.appspot.com",
+  messagingSenderId: "510382881068",
+  appId: "1:510382881068:web:399ffec02b4e44e3629489",
+  measurementId: "G-PL4WJZ40QP"
+};
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Obtener session_id de la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session_id');
+
+        // Esperar autenticación y cargar datos
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                try {
+                    // Buscar restaurante del usuario
+                    const snapshot = await db.collection('restaurants')
+                        .where('userId', '==', user.uid)
+                        .limit(1)
+                        .get();
+
+                    if (!snapshot.empty) {
+                        const restaurant = snapshot.docs[0].data();
+                        
+                        // Actualizar UI
+                        document.getElementById('plan-name').textContent = 
+                            `Plan ${restaurant.plan ? restaurant.plan.charAt(0).toUpperCase() + restaurant.plan.slice(1) : 'Premium'}`;
+                        
+                        document.getElementById('billing-cycle').textContent = 
+                            restaurant.billingCycle === 'annual' ? 'Anual' : 'Mensual';
+                    }
+                } catch (error) {
+                    console.error('Error cargando datos:', error);
+                }
+            }
+        });
+
+        console.log('✅ Pago exitoso - Session ID:', sessionId);
+    </script>
+</body>
+</html>

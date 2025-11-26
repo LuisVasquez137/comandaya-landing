@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - ComandaYa</title>
+    <link rel="stylesheet" href="checkout.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="checkout-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="../" class="logo-link">
+                    <img src="../logo.jpg" alt="ComandaYa" class="logo-img">
+                    <span class="logo-text">ComandaYa</span>
+                </a>
+                <div class="header-secure">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M8 1L3 3V7C3 10.5 5.5 13.5 8 14C10.5 13.5 13 10.5 13 7V3L8 1Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                    </svg>
+                    <span>Pago seguro</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Progress Steps -->
+    <div class="progress-container">
+        <div class="container">
+            <div class="progress-steps">
+                <div class="step active" id="step-1-indicator">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Autenticación</div>
+                </div>
+                <div class="step-line"></div>
+                <div class="step" id="step-2-indicator">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Selecciona tu plan</div>
+                </div>
+                <div class="step-line"></div>
+                <div class="step" id="step-3-indicator">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Confirmación</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="checkout-main">
+        <div class="container">
+            
+            <!-- STEP 1: LOGIN -->
+            <div class="checkout-step active" id="step-1">
+                <div class="step-content">
+                    <h1 class="step-title">Inicia sesión o regístrate</h1>
+                    <p class="step-subtitle">Para continuar con tu suscripción</p>
+
+                    <div class="auth-box">
+                        <!-- Email Login -->
+                        <div class="auth-method" id="email-auth">
+                            <h3>Ingresa con tu correo</h3>
+                            <form id="login-form">
+                                <div class="form-group">
+                                    <label for="email">Correo electrónico</label>
+                                    <input type="email" id="email" placeholder="tu@email.com" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="password">Contraseña</label>
+                                    <input type="password" id="password" placeholder="••••••••" required>
+                                </div>
+                                <button type="submit" class="btn-primary" id="login-btn">
+                                    <span>Continuar</span>
+                                </button>
+                            </form>
+
+                            <div class="auth-divider">
+                                <span>o</span>
+                            </div>
+
+                            <p class="toggle-auth">
+                                ¿No tienes cuenta? 
+                                <a href="#" id="show-register">Regístrate aquí</a>
+                            </p>
+                        </div>
+
+                        <!-- Register Form (hidden by default) -->
+                        <div class="auth-method hidden" id="register-auth">
+                            <h3>Crea tu cuenta</h3>
+                            <form id="register-form">
+                                <div class="form-group">
+                                    <label for="register-name">Nombre del restaurante</label>
+                                    <input type="text" id="register-name" placeholder="Mi Restaurante" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="register-email">Correo electrónico</label>
+                                    <input type="email" id="register-email" placeholder="tu@email.com" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="register-password">Contraseña</label>
+                                    <input type="password" id="register-password" placeholder="Mínimo 6 caracteres" required minlength="6">
+                                </div>
+                                <button type="submit" class="btn-primary" id="register-btn">
+                                    <span>Crear cuenta</span>
+                                </button>
+                            </form>
+
+                            <div class="auth-divider">
+                                <span>o</span>
+                            </div>
+
+                            <p class="toggle-auth">
+                                ¿Ya tienes cuenta? 
+                                <a href="#" id="show-login">Inicia sesión</a>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Loading Overlay -->
+                    <div class="loading-overlay hidden" id="auth-loading">
+                        <div class="spinner"></div>
+                        <p>Autenticando...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: PLAN SELECTION -->
+            <div class="checkout-step" id="step-2">
+                <div class="step-content">
+                    <h1 class="step-title">Selecciona tu plan</h1>
+                    <p class="step-subtitle">Elige el plan perfecto para tu restaurante</p>
+
+                    <!-- Billing Toggle -->
+                    <div class="billing-toggle">
+                        <button class="toggle-btn active" data-cycle="annual">
+                            <span>Anual</span>
+                            <span class="badge">Ahorra hasta 43%</span>
+                        </button>
+                        <button class="toggle-btn" data-cycle="monthly">
+                            <span>Mensual</span>
+                        </button>
+                    </div>
+
+                    <!-- Plans Grid -->
+                    <div class="plans-grid">
+                        <!-- Plan Básico -->
+                        <div class="plan-card" data-plan="basico">
+                            <div class="plan-header">
+                                <h3 class="plan-name">Básico</h3>
+                                <p class="plan-subtitle">Perfecto para empezar</p>
+                            </div>
+                            <div class="plan-price">
+                                <div class="price annual">
+                                    <span class="currency">Q</span>
+                                    <span class="amount">99</span>
+                                    <span class="period">/mes</span>
+                                </div>
+                                <div class="price monthly hidden">
+                                    <span class="currency">Q</span>
+                                    <span class="amount">175</span>
+                                    <span class="period">/mes</span>
+                                </div>
+                                <p class="price-note annual">Facturado anualmente: Q1,188</p>
+                                <p class="price-note monthly hidden">Sin compromiso anual</p>
+                            </div>
+                            <ul class="plan-features">
+                                <li>✓ 1 sucursal</li>
+                                <li>✓ Hasta 500 órdenes/mes</li>
+                                <li>✓ Toma de pedidos</li>
+                                <li>✓ Control de cocina</li>
+                                <li>✓ Reportes básicos</li>
+                                <li>✓ Impresión de órdenes</li>
+                            </ul>
+                            <button class="btn-select-plan" data-plan="basico">
+                                Seleccionar Básico
+                            </button>
+                        </div>
+
+                        <!-- Plan Pro -->
+                        <div class="plan-card featured" data-plan="pro">
+                            <div class="popular-badge">Más popular</div>
+                            <div class="plan-header">
+                                <h3 class="plan-name">Pro</h3>
+                                <p class="plan-subtitle">Para restaurantes en crecimiento</p>
+                            </div>
+                            <div class="plan-price">
+                                <div class="price annual">
+                                    <span class="currency">Q</span>
+                                    <span class="amount">199</span>
+                                    <span class="period">/mes</span>
+                                </div>
+                                <div class="price monthly hidden">
+                                    <span class="currency">Q</span>
+                                    <span class="amount">275</span>
+                                    <span class="period">/mes</span>
+                                </div>
+                                <p class="price-note annual">Facturado anualmente: Q2,388</p>
+                                <p class="price-note monthly hidden">Sin compromiso anual</p>
+                            </div>
+                            <ul class="plan-features">
+                                <li>✓ <strong>Todo lo del plan Básico</strong></li>
+                                <li>✓ 2 sucursales</li>
+                                <li>✓ Hasta 1,000 órdenes/mes</li>
+                                <li>✓ Gestor de recetas</li>
+                                <li>✓ Control de inventario</li>
+                                <li>✓ Gestión de proveedores</li>
+                                <li>✓ Preparación por lotes</li>
+                            </ul>
+                            <button class="btn-select-plan" data-plan="pro">
+                                Seleccionar Pro
+                            </button>
+                        </div>
+
+                        <!-- Plan Premium -->
+                        <div class="plan-card" data-plan="premium">
+                            <div class="plan-header">
+                                <h3 class="plan-name">Premium</h3>
+                                <p class="plan-subtitle">Máximo control</p>
+                            </div>
+                            <div class="plan-price">
+                                <div class="price annual">
+                                    <span class="currency">Q</span>
+                                    <span class="amount">350</span>
+                                    <span class="period">/mes</span>
+                                </div>
+                                <div class="price monthly hidden">
+                                    <span class="currency">Q</span>
+                                    <span class="amount">425</span>
+                                    <span class="period">/mes</span>
+                                </div>
+                                <p class="price-note annual">Facturado anualmente: Q4,200</p>
+                                <p class="price-note monthly hidden">Sin compromiso anual</p>
+                            </div>
+                            <ul class="plan-features">
+                                <li>✓ <strong>Todo lo del plan Pro</strong></li>
+                                <li>✓ Sucursales ilimitadas</li>
+                                <li>✓ Órdenes ilimitadas</li>
+                                <li>✓ Control de costos</li>
+                                <li>✓ Ingresos y gastos</li>
+                                <li>✓ Asistente IA</li>
+                                <li>✓ Análisis avanzados</li>
+                            </ul>
+                            <button class="btn-select-plan" data-plan="premium">
+                                Seleccionar Premium
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: CONFIRMATION -->
+            <div class="checkout-step" id="step-3">
+                <div class="step-content">
+                    <h1 class="step-title">Confirma tu suscripción</h1>
+                    <p class="step-subtitle">Revisa los detalles antes de continuar</p>
+
+                    <div class="confirmation-box">
+                        <div class="confirmation-section">
+                            <h3>Resumen de tu pedido</h3>
+                            <div class="order-summary">
+                                <div class="summary-row">
+                                    <span>Plan seleccionado:</span>
+                                    <strong id="summary-plan-name">-</strong>
+                                </div>
+                                <div class="summary-row">
+                                    <span>Ciclo de facturación:</span>
+                                    <strong id="summary-billing-cycle">-</strong>
+                                </div>
+                                <div class="summary-row total">
+                                    <span>Total:</span>
+                                    <strong id="summary-total">Q0</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="confirmation-section">
+                            <h3>Cuenta de restaurante</h3>
+                            <div class="account-info">
+                                <p id="summary-email">-</p>
+                            </div>
+                        </div>
+
+                        <div class="confirmation-actions">
+                            <button class="btn-secondary" id="back-to-plans">
+                                ← Cambiar plan
+                            </button>
+                            <button class="btn-primary" id="proceed-payment">
+                                <span>Continuar al pago</span>
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <p class="security-note">
+                            🔒 Pago 100% seguro procesado por Recurrente. Tus datos están protegidos.
+                        </p>
+                    </div>
+
+                    <!-- Loading Overlay -->
+                    <div class="loading-overlay hidden" id="payment-loading">
+                        <div class="spinner"></div>
+                        <p>Redirigiendo a Recurrente...</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="checkout-footer">
+        <div class="container">
+            <p>&copy; 2024 ComandaYa. Todos los derechos reservados.</p>
+            <div class="footer-links">
+                <a href="#">Términos de servicio</a>
+                <a href="#">Política de privacidad</a>
+                <a href="mailto:comandayalatam@gmail.com">Soporte</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Checkout Script -->
+    <script src="checkout.js"></script>
+</body>
+</html>

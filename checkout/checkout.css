@@ -1,0 +1,739 @@
+/* ========================================
+   CHECKOUT STYLES - ComandaYa
+   Diseño consistente con landing page
+======================================== */
+
+:root {
+    --yellow: #FFC107;
+    --yellow-dark: #FFB300;
+    --black: #1a1a1a;
+    --gray: #666;
+    --gray-light: #f5f5f5;
+    --white: #ffffff;
+    --red: #ff4444;
+    --green: #4CAF50;
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.15);
+    --radius: 12px;
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--gray-light);
+    color: var(--black);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+/* ========================================
+   HEADER
+======================================== */
+
+.checkout-header {
+    background: var(--white);
+    box-shadow: var(--shadow);
+    padding: 16px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.logo-link:hover {
+    opacity: 0.8;
+}
+
+.logo-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+}
+
+.logo-text {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--black);
+}
+
+.header-secure {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--green);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* ========================================
+   PROGRESS STEPS
+======================================== */
+
+.progress-container {
+    background: var(--white);
+    padding: 32px 0;
+    margin-bottom: 32px;
+}
+
+.progress-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0.4;
+    transition: var(--transition);
+}
+
+.step.active {
+    opacity: 1;
+}
+
+.step-number {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--gray-light);
+    color: var(--gray);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 18px;
+    transition: var(--transition);
+}
+
+.step.active .step-number {
+    background: var(--yellow);
+    color: var(--black);
+}
+
+.step-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray);
+    text-align: center;
+}
+
+.step.active .step-label {
+    color: var(--black);
+}
+
+.step-line {
+    width: 80px;
+    height: 2px;
+    background: var(--gray-light);
+    margin: 0 16px;
+}
+
+/* ========================================
+   MAIN CONTENT
+======================================== */
+
+.checkout-main {
+    flex: 1;
+    padding: 40px 0;
+}
+
+.checkout-step {
+    display: none;
+    animation: fadeIn 0.4s ease;
+}
+
+.checkout-step.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.step-content {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.step-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--black);
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.step-subtitle {
+    font-size: 16px;
+    color: var(--gray);
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+/* ========================================
+   AUTH BOX (STEP 1)
+======================================== */
+
+.auth-box {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 40px;
+    box-shadow: var(--shadow);
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+.auth-method h3 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--black);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: inherit;
+    transition: var(--transition);
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--yellow);
+}
+
+.auth-divider {
+    text-align: center;
+    margin: 24px 0;
+    position: relative;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 45%;
+    height: 1px;
+    background: #e0e0e0;
+}
+
+.auth-divider::before {
+    left: 0;
+}
+
+.auth-divider::after {
+    right: 0;
+}
+
+.auth-divider span {
+    background: var(--white);
+    padding: 0 16px;
+    color: var(--gray);
+    font-size: 14px;
+}
+
+.toggle-auth {
+    text-align: center;
+    font-size: 14px;
+    color: var(--gray);
+}
+
+.toggle-auth a {
+    color: var(--yellow-dark);
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.toggle-auth a:hover {
+    color: var(--yellow);
+}
+
+/* ========================================
+   BILLING TOGGLE (STEP 2)
+======================================== */
+
+.billing-toggle {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 40px;
+    padding: 8px;
+    background: var(--white);
+    border-radius: var(--radius);
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: var(--shadow);
+}
+
+.toggle-btn {
+    flex: 1;
+    padding: 16px 24px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.toggle-btn:hover {
+    background: var(--gray-light);
+}
+
+.toggle-btn.active {
+    background: var(--yellow);
+    color: var(--black);
+}
+
+.toggle-btn .badge {
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--black);
+    color: var(--yellow);
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+/* ========================================
+   PLANS GRID (STEP 2)
+======================================== */
+
+.plans-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.plan-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 32px;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    position: relative;
+    border: 2px solid transparent;
+}
+
+.plan-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.plan-card.featured {
+    border-color: var(--yellow);
+}
+
+.popular-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--yellow);
+    color: var(--black);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 16px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.plan-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.plan-name {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.plan-subtitle {
+    font-size: 14px;
+    color: var(--gray);
+}
+
+.plan-price {
+    text-align: center;
+    margin-bottom: 32px;
+    padding: 20px;
+    background: var(--gray-light);
+    border-radius: 8px;
+}
+
+.price {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.price .currency {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.price .amount {
+    font-size: 42px;
+    font-weight: 800;
+}
+
+.price .period {
+    font-size: 16px;
+    color: var(--gray);
+}
+
+.price-note {
+    font-size: 13px;
+    color: var(--gray);
+}
+
+.plan-features {
+    list-style: none;
+    margin-bottom: 32px;
+}
+
+.plan-features li {
+    padding: 10px 0;
+    font-size: 14px;
+    border-bottom: 1px solid var(--gray-light);
+}
+
+.plan-features li:last-child {
+    border-bottom: none;
+}
+
+/* ========================================
+   CONFIRMATION BOX (STEP 3)
+======================================== */
+
+.confirmation-box {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 40px;
+    box-shadow: var(--shadow);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.confirmation-section {
+    margin-bottom: 32px;
+}
+
+.confirmation-section h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--gray-light);
+}
+
+.order-summary {
+    background: var(--gray-light);
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    font-size: 15px;
+}
+
+.summary-row.total {
+    border-top: 2px solid #ddd;
+    margin-top: 8px;
+    padding-top: 16px;
+    font-size: 18px;
+}
+
+.account-info p {
+    background: var(--gray-light);
+    padding: 16px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.confirmation-actions {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.confirmation-actions button {
+    flex: 1;
+}
+
+.security-note {
+    text-align: center;
+    font-size: 13px;
+    color: var(--gray);
+    padding: 16px;
+    background: var(--gray-light);
+    border-radius: 8px;
+}
+
+/* ========================================
+   BUTTONS
+======================================== */
+
+.btn-primary,
+.btn-secondary,
+.btn-select-plan {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 32px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: var(--yellow);
+    color: var(--black);
+}
+
+.btn-primary:hover {
+    background: var(--yellow-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 193, 7, 0.3);
+}
+
+.btn-secondary {
+    background: var(--white);
+    color: var(--black);
+    border: 2px solid var(--black);
+}
+
+.btn-secondary:hover {
+    background: var(--black);
+    color: var(--white);
+}
+
+.btn-select-plan {
+    width: 100%;
+    background: var(--black);
+    color: var(--white);
+}
+
+.btn-select-plan:hover {
+    background: var(--yellow);
+    color: var(--black);
+}
+
+.plan-card.featured .btn-select-plan {
+    background: var(--yellow);
+    color: var(--black);
+}
+
+.plan-card.featured .btn-select-plan:hover {
+    background: var(--black);
+    color: var(--white);
+}
+
+/* ========================================
+   LOADING OVERLAY
+======================================== */
+
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    border-radius: var(--radius);
+    z-index: 10;
+}
+
+.loading-overlay.hidden {
+    display: none;
+}
+
+.spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid var(--gray-light);
+    border-top-color: var(--yellow);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-overlay p {
+    font-weight: 600;
+    color: var(--gray);
+}
+
+/* ========================================
+   FOOTER
+======================================== */
+
+.checkout-footer {
+    background: var(--black);
+    color: var(--white);
+    padding: 24px 0;
+    margin-top: auto;
+}
+
+.checkout-footer .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.footer-links {
+    display: flex;
+    gap: 24px;
+}
+
+.footer-links a {
+    color: var(--white);
+    text-decoration: none;
+    font-size: 14px;
+    transition: var(--transition);
+}
+
+.footer-links a:hover {
+    color: var(--yellow);
+}
+
+/* ========================================
+   UTILITIES
+======================================== */
+
+.hidden {
+    display: none !important;
+}
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 768px) {
+    .step-title {
+        font-size: 24px;
+    }
+
+    .step-subtitle {
+        font-size: 14px;
+    }
+
+    .auth-box,
+    .confirmation-box {
+        padding: 24px;
+    }
+
+    .plans-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .step-label {
+        font-size: 11px;
+    }
+
+    .step-line {
+        width: 40px;
+    }
+
+    .confirmation-actions {
+        flex-direction: column;
+    }
+
+    .checkout-footer .container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .footer-links {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+}

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago Cancelado - ComandaYa</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .cancel-container {
+            background: white;
+            border-radius: 16px;
+            padding: 48px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cancel-icon {
+            width: 120px;
+            height: 120px;
+            background: #ff9800;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 32px;
+            animation: scaleIn 0.6s ease 0.2s both;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .cancel-icon svg {
+            width: 60px;
+            height: 60px;
+            stroke: white;
+            stroke-width: 3;
+            fill: none;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: #1a1a1a;
+            margin-bottom: 16px;
+        }
+
+        p {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+
+        .reasons {
+            background: #f5f5f5;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 32px;
+            text-align: left;
+        }
+
+        .reasons h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #1a1a1a;
+        }
+
+        .reasons ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .reasons li {
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .reasons li:last-child {
+            border-bottom: none;
+        }
+
+        .reasons li::before {
+            content: "✓";
+            color: #FFC107;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 200px;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #FFC107;
+            color: #1a1a1a;
+        }
+
+        .btn-primary:hover {
+            background: #FFB300;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 193, 7, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #1a1a1a;
+            border: 2px solid #1a1a1a;
+        }
+
+        .btn-secondary:hover {
+            background: #1a1a1a;
+            color: white;
+        }
+
+        .support-box {
+            margin-top: 32px;
+            padding: 24px;
+            background: #fff9e6;
+            border-radius: 12px;
+            border: 2px solid #FFC107;
+        }
+
+        .support-box h4 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+        }
+
+        .support-box p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .support-box a {
+            color: #1a1a1a;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .support-box a:hover {
+            color: #FFB300;
+        }
+
+        @media (max-width: 768px) {
+            .cancel-container {
+                padding: 32px 24px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cancel-container">
+        <div class="cancel-icon">
+            <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+        </div>
+
+        <h1>Pago Cancelado</h1>
+        <p>No te preocupes, no se realizó ningún cargo. Puedes intentar nuevamente cuando estés listo.</p>
+
+        <div class="reasons">
+            <h3>¿Por qué elegirnos?</h3>
+            <ul>
+                <li>14 días de garantía de devolución</li>
+                <li>Cancela tu suscripción en cualquier momento</li>
+                <li>Soporte técnico 24/7 en español</li>
+                <li>Sin costos de instalación ni configuración</li>
+            </ul>
+        </div>
+
+        <div class="buttons">
+            <a href="https://comandaya.com/checkout/" class="btn btn-primary">
+                <span>← Intentar Nuevamente</span>
+            </a>
+            <a href="https://comandaya.com" class="btn btn-secondary">
+                <span>Volver al Inicio</span>
+            </a>
+        </div>
+
+        <div class="support-box">
+            <h4>¿Tienes dudas antes de suscribirte?</h4>
+            <p>Nuestro equipo está listo para ayudarte.</p>
+            <a href="https://wa.me/50234749466?text=Hola,%20tengo%20dudas%20sobre%20los%20planes%20de%20ComandaYa" target="_blank">
+                <span>💬</span>
+                <span>Chatea con nosotros por WhatsApp</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session_id');
+        console.log('❌ Pago cancelado - Session ID:', sessionId);
+    </script>
+</body>
+</html>
