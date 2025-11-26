@@ -115,35 +115,83 @@ async function findRestaurantId(userId) {
   try {
     console.log('🔍 Buscando restaurante para userId:', userId);
     
-    // Buscar en la colección restaurants donde el campo userId coincida
-    const snapshot = await db.collection('restaurants')
-      .where('userId', '==', userId)
-      .limit(1)
-      .get();
+    // PASO 1: Buscar el documento del usuario en la colección 'users'
+    const userDoc = await db.collection('users').doc(userId).get();
     
-    if (!snapshot.empty) {
-      state.restaurantId = snapshot.docs[0].id;
-      console.log('✅ Restaurante encontrado:', state.restaurantId);
+    if (!userDoc.exists) {
+      console.error('❌ No se encontró el usuario en Firestore');
       
-      // Si ya tiene un plan seleccionado desde la URL, ir directo al paso 2
-      if (state.selectedPlan) {
-        showStep(2);
-        // Pre-seleccionar el plan y ciclo
-        setTimeout(() => {
-          selectBillingCycle(state.selectedCycle);
-          selectPlan(state.selectedPlan);
-        }, 100);
-      } else {
-        showStep(2);
+      // Intentar buscar por email como fallback
+      const user = auth.currentUser;
+      if (user && user.email) {
+        console.log('🔍 Intentando buscar por email:', user.email);
+        
+        const userSnapshot = await db.collection('users')
+          .where('email', '==', user.email)
+          .limit(1)
+          .get();
+        
+        if (!userSnapshot.empty) {
+          const userData = userSnapshot.docs[0].data();
+          const restaurantId = userData.idRestaurant;
+          
+          if (restaurantId) {
+            state.restaurantId = restaurantId;
+            console.log('✅ Restaurante encontrado por email:', state.restaurantId);
+            proceedToStep2();
+            return;
+          }
+        }
       }
-    } else {
-      console.error('❌ No se encontró restaurante para este usuario');
+      
       showError('No se encontró tu restaurante. Por favor contacta a soporte.');
       showStep(1);
+      return;
     }
+    
+    // PASO 2: Obtener el idRestaurant del usuario
+    const userData = userDoc.data();
+    const restaurantId = userData.idRestaurant;
+    
+    if (!restaurantId) {
+      console.error('❌ El usuario no tiene idRestaurant asignado');
+      showError('Tu cuenta no está asociada a ningún restaurante. Contacta a soporte.');
+      showStep(1);
+      return;
+    }
+    
+    // PASO 3: Verificar que el restaurante existe
+    const restaurantDoc = await db.collection('restaurants').doc(restaurantId).get();
+    
+    if (!restaurantDoc.exists) {
+      console.error('❌ El restaurante no existe en Firestore');
+      showError('Restaurante no encontrado. Contacta a soporte.');
+      showStep(1);
+      return;
+    }
+    
+    // Todo OK
+    state.restaurantId = restaurantId;
+    console.log('✅ Restaurante encontrado:', state.restaurantId);
+    
+    proceedToStep2();
+    
   } catch (error) {
     console.error('❌ Error buscando restaurante:', error);
     showError('Error al cargar tu información. Intenta nuevamente.');
+  }
+}
+
+// Función auxiliar para proceder al step 2
+function proceedToStep2() {
+  if (state.selectedPlan) {
+    showStep(2);
+    setTimeout(() => {
+      selectBillingCycle(state.selectedCycle);
+      selectPlan(state.selectedPlan);
+    }, 100);
+  } else {
+    showStep(2);
   }
 }
 
@@ -246,11 +294,10 @@ async function handleRegister(e) {
     
     console.log('✅ Usuario creado:', userId);
     
-    // Crear documento de restaurante en Firestore
+    // PASO 1: Crear documento de restaurante en Firestore
     const restaurantRef = await db.collection('restaurants').add({
       name: name,
       email: email,
-      userId: userId,
       phone: '',
       address: '',
       image: '',
@@ -267,11 +314,33 @@ async function handleRegister(e) {
       recurrenteCustomerId: '',
       subscriptionStatus: '',
       billingCycle: '',
-      subscriptionStartDate: 0
+      subscriptionStartDate: 0,
+      tipEnabled: false,
+      tipPercentage: 10,
+      tipText: 'Propina sugerida',
+      tipAskPayment: false,
+      businessType: '',
+      cuisineType: ''
     });
     
+    console.log('✅ Restaurante creado:', restaurantRef.id);
+    
+    // PASO 2: Crear documento de usuario en la colección 'users'
+    await db.collection('users').doc(userId).set({
+      id: userId,
+      idRestaurant: restaurantRef.id,  // ✅ IMPORTANTE: Vincular con el restaurante
+      branchIds: [],
+      username: name,
+      email: email,
+      image: '',
+      role: 'ADMIN',  // O el rol que uses para propietarios de restaurantes
+      fcmToken: '',
+      phone: ''
+    });
+    
+    console.log('✅ Usuario vinculado con restaurante');
+    
     state.restaurantId = restaurantRef.id;
-    console.log('✅ Restaurante creado:', state.restaurantId);
     
     // El onAuthStateChanged se encargará del resto
   } catch (error) {
