@@ -1,19 +1,15 @@
 // ============================================
 // CHECKOUT SCRIPT - COMANDAYA
-// Versión optimizada para GITHUB PAGES
-// Con sistema de debugging extensivo
+// Versión FINAL para GitHub Pages
+// Con manejo correcto de token + sesión existente
 // ============================================
 
-// ============================================
-// MODO DEBUG - ACTIVAR DURANTE DESARROLLO
-// ============================================
 const DEBUG_MODE = true; // ← Cambiar a false en producción
 
 function debugLog(message, data = null) {
   console.log(`[DEBUG] ${message}`, data || '');
   
   if (DEBUG_MODE) {
-    // Panel de debug visual
     let debugPanel = document.getElementById('debug-panel');
     if (!debugPanel) {
       debugPanel = document.createElement('div');
@@ -37,7 +33,6 @@ function debugLog(message, data = null) {
         box-shadow: 0 0 20px rgba(0,255,0,0.3);
       `;
       
-      // Título del panel
       const title = document.createElement('div');
       title.textContent = '🐛 DEBUG PANEL';
       title.style.cssText = `
@@ -50,7 +45,6 @@ function debugLog(message, data = null) {
       `;
       debugPanel.appendChild(title);
       
-      // Botón para cerrar
       const closeBtn = document.createElement('button');
       closeBtn.textContent = '✕';
       closeBtn.style.cssText = `
@@ -69,7 +63,6 @@ function debugLog(message, data = null) {
       closeBtn.onclick = () => debugPanel.style.display = 'none';
       debugPanel.appendChild(closeBtn);
       
-      // Botón para limpiar
       const clearBtn = document.createElement('button');
       clearBtn.textContent = '🗑️';
       clearBtn.style.cssText = `
@@ -114,9 +107,7 @@ function debugLog(message, data = null) {
   }
 }
 
-// ============================================
-// CONFIGURACIÓN DE FIREBASE
-// ============================================
+// Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyD0if0ACDfngNzhthGAW_NHcHOikqvIXdo",
   authDomain: "orderapp-e0c31.firebaseapp.com",
@@ -147,9 +138,16 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 const functions = firebase.functions();
 
-// ============================================
-// VERIFICAR CONECTIVIDAD CON FIRESTORE
-// ============================================
+// ✅ CRÍTICO: Deshabilitar persistencia de sesión para forzar uso de token
+auth.setPersistence(firebase.auth.Auth.Persistence.SESSION)
+  .then(() => {
+    debugLog('✅ Persistencia configurada: SESSION');
+  })
+  .catch((error) => {
+    debugLog('⚠️ Error configurando persistencia', error);
+  });
+
+// Verificar conectividad Firestore
 debugLog('🌐 Verificando conectividad con Firestore desde GitHub Pages...');
 db.collection('test').limit(1).get()
   .then(() => {
@@ -158,22 +156,18 @@ db.collection('test').limit(1).get()
   .catch(error => {
     debugLog('❌ Firestore: Error de conexión', {
       code: error.code,
-      message: error.message,
-      hint: error.code === 'permission-denied' 
-        ? 'Verifica las reglas de Firestore'
-        : 'Posible problema de CORS o configuración'
+      message: error.message
     });
   });
 
-// ============================================
-// ESTADO GLOBAL
-// ============================================
+// Estado global
 const state = {
   currentStep: 1,
   user: null,
   restaurantId: null,
   selectedPlan: null,
   selectedCycle: 'annual',
+  tokenProcessed: false, // ✅ NUEVO: Flag para evitar loops
   plans: {
     basico: {
       id: 'basico',
@@ -206,7 +200,6 @@ document.addEventListener('DOMContentLoaded', () => {
   debugLog('🚀 DOM Cargado - Iniciando checkout');
   debugLog('📍 URL', window.location.href);
   debugLog('🌍 Hostname', window.location.hostname);
-  debugLog('🔒 Protocolo', window.location.protocol);
   
   // Verificar parámetros URL
   const urlParams = new URLSearchParams(window.location.search);
@@ -221,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
     cycle: cycleFromUrl || 'no especificado'
   });
   
-  // Guardar plan y ciclo si vienen en URL
+  // Guardar plan y ciclo
   if (planFromUrl && state.plans[planFromUrl]) {
     state.selectedPlan = planFromUrl;
     debugLog('📦 Plan pre-seleccionado desde URL', planFromUrl);
@@ -232,27 +225,56 @@ document.addEventListener('DOMContentLoaded', () => {
     debugLog('💰 Ciclo pre-seleccionado desde URL', cycleFromUrl);
   }
   
+  // ✅ CAMBIO CRÍTICO: Si hay token en URL, procesarlo PRIMERO
+  if (token && !state.tokenProcessed) {
+    debugLog('🔑 Token detectado - Procesamiento prioritario');
+    debugLog('⚠️ Cualquier sesión existente será reemplazada');
+    
+    // Marcar como procesado para evitar loops
+    state.tokenProcessed = true;
+    
+    // Cerrar sesión actual si existe
+    if (auth.currentUser) {
+      debugLog('🔓 Cerrando sesión existente para usar token nuevo...');
+      auth.signOut().then(() => {
+        debugLog('✅ Sesión anterior cerrada');
+        // Ahora sí procesar el token
+        handleTokenLogin(token);
+      });
+    } else {
+      debugLog('ℹ️ No hay sesión existente, procesando token directamente');
+      handleTokenLogin(token);
+    }
+  } else {
+    // No hay token, usar sesión normal
+    debugLog('ℹ️ No hay token en URL, usando flujo normal de autenticación');
+  }
+  
   // Auth state observer
   auth.onAuthStateChanged(user => {
     debugLog('🔄 Auth State Changed', {
       isAuthenticated: !!user,
       userEmail: user ? user.email : null,
       userId: user ? user.uid : null,
-      displayName: user ? user.displayName : null
+      tokenProcessed: state.tokenProcessed
     });
     
     if (user) {
       debugLog('✅ Usuario autenticado detectado');
       state.user = user;
-      findRestaurantId(user.uid);
+      
+      // Solo proceder si no estamos esperando el token
+      if (!token || state.tokenProcessed) {
+        findRestaurantId(user.uid);
+      } else {
+        debugLog('⏸️ Esperando procesamiento de token...');
+      }
     } else {
       debugLog('❌ Usuario NO autenticado');
       
-      if (token) {
-        debugLog('🔑 Token detectado en URL - Intentando auto-login...');
-        handleTokenLogin(token);
-      } else {
-        debugLog('ℹ️ No hay token - Mostrando pantalla de login');
+      // Si no hay token o ya se procesó, mostrar login
+      if (!token || state.tokenProcessed) {
+        debugLog('ℹ️ Mostrando pantalla de login');
         showStep(1);
       }
     }
@@ -290,15 +312,14 @@ function handleTokenLogin(token) {
           timeElapsed: elapsedTime + 'ms'
         });
         
-        // El onAuthStateChanged se encargará del resto
+        debugLog('✅ Token procesado exitosamente - Auth state observer continuará');
       })
       .catch((error) => {
         const elapsedTime = Date.now() - startTime;
         debugLog('❌ ERROR en signInWithCustomToken', {
           code: error.code,
           message: error.message,
-          timeElapsed: elapsedTime + 'ms',
-          tokenPreview: decodedToken.substring(0, 30) + '...'
+          timeElapsed: elapsedTime + 'ms'
         });
         
         let errorMessage = 'Error de autenticación';
@@ -314,24 +335,16 @@ function handleTokenLogin(token) {
             break;
           case 'auth/custom-token-mismatch':
             errorMessage = 'Token de proyecto incorrecto. Contacta a soporte.';
-            debugLog('💡 Posibles causas', [
-              'Token generado para otro proyecto Firebase',
-              'API Key incorrecta en firebaseConfig'
-            ]);
             break;
           case 'auth/network-request-failed':
             errorMessage = 'Error de conexión. Verifica tu internet.';
-            debugLog('💡 Posibles causas', [
-              'Sin conexión a internet',
-              'Dominio no autorizado en Firebase',
-              'Problemas de CORS'
-            ]);
             break;
           default:
             errorMessage = `Error: ${error.message}`;
         }
         
         showError(errorMessage);
+        state.tokenProcessed = false; // Permitir reintento
         showStep(1);
       });
   } catch (error) {
@@ -340,6 +353,7 @@ function handleTokenLogin(token) {
       stack: error.stack
     });
     showError('Error procesando el token');
+    state.tokenProcessed = false;
     showStep(1);
   }
 }
@@ -352,7 +366,6 @@ async function findRestaurantId(userId) {
     debugLog('🔍 === INICIO BÚSQUEDA DE RESTAURANTE ===');
     debugLog('👤 User ID', userId);
     
-    // Mostrar loading
     showLoadingMessage('Cargando información del restaurante...');
     
     debugLog('📂 Accediendo a colección "Users"...');
@@ -379,31 +392,24 @@ async function findRestaurantId(userId) {
       }
       
       debugLog('📧 Buscando por email', user.email);
-      const queryStartTime = Date.now();
-      
       const userSnapshot = await db.collection('Users')
         .where('email', '==', user.email)
         .limit(1)
         .get();
       
-      const queryElapsedTime = Date.now() - queryStartTime;
-      
-      debugLog('📊 Resultados de búsqueda por email', {
-        timeElapsed: queryElapsedTime + 'ms',
+      debugLog('📊 Resultados', {
         size: userSnapshot.size,
         empty: userSnapshot.empty
       });
       
       if (userSnapshot.empty) {
-        throw new Error('Usuario no encontrado en Firestore (ni por UID ni por email)');
+        throw new Error('Usuario no encontrado en Firestore');
       }
       
       const userData = userSnapshot.docs[0].data();
-      debugLog('✅ Usuario encontrado por email', userData);
-      
       const restaurantId = userData.idRestaurant;
       if (!restaurantId) {
-        throw new Error('Usuario no tiene restaurante asignado (idRestaurant vacío)');
+        throw new Error('Usuario no tiene restaurante asignado');
       }
       
       state.restaurantId = restaurantId;
@@ -414,7 +420,6 @@ async function findRestaurantId(userId) {
       return;
     }
     
-    // Si el documento existe
     const userData = userDoc.data();
     debugLog('📄 Datos del usuario obtenidos', {
       hasData: !!userData,
@@ -432,23 +437,19 @@ async function findRestaurantId(userId) {
     const restaurantId = userData.idRestaurant;
     
     if (!restaurantId) {
-      throw new Error('Usuario no tiene restaurante asignado (campo idRestaurant vacío)');
+      throw new Error('Usuario no tiene restaurante asignado');
     }
     
     debugLog('🏪 Verificando que el restaurante existe...');
-    debugLog('📍 Restaurant ID a verificar', restaurantId);
     
-    const restaurantStartTime = Date.now();
     const restaurantDoc = await db.collection('Restaurants').doc(restaurantId).get();
-    const restaurantElapsedTime = Date.now() - restaurantStartTime;
     
     debugLog('✅ Verificación de restaurante completada', {
-      timeElapsed: restaurantElapsedTime + 'ms',
       exists: restaurantDoc.exists
     });
     
     if (!restaurantDoc.exists) {
-      throw new Error('Restaurante no encontrado en Firestore (ID: ' + restaurantId + ')');
+      throw new Error('Restaurante no encontrado en Firestore');
     }
     
     const restaurantData = restaurantDoc.data();
@@ -461,7 +462,7 @@ async function findRestaurantId(userId) {
     });
     
     state.restaurantId = restaurantId;
-    debugLog('✅✅✅ BÚSQUEDA COMPLETA - Restaurant ID asignado a state', restaurantId);
+    debugLog('✅✅✅ BÚSQUEDA COMPLETA - Restaurant ID asignado', restaurantId);
     
     hideLoadingMessage();
     proceedToStep2();
@@ -470,40 +471,18 @@ async function findRestaurantId(userId) {
     debugLog('❌ ERROR CRÍTICO en findRestaurantId', {
       name: error.name,
       message: error.message,
-      code: error.code,
-      stack: error.stack
+      code: error.code
     });
     
     hideLoadingMessage();
     
-    // Mensaje específico según el error
     let errorMessage = 'Error al cargar información del restaurante';
-    let hints = [];
     
     if (error.code === 'permission-denied') {
       errorMessage = 'Error de permisos en Firestore';
-      hints = [
-        'Verifica las reglas de Firestore',
-        'Asegúrate de que el usuario autenticado tenga permisos de lectura',
-        'Reglas recomendadas: allow read, write: if request.auth != null;'
-      ];
     } else if (error.code === 'unavailable') {
       errorMessage = 'Firestore no disponible';
-      hints = [
-        'Problema de red o conectividad',
-        'Verifica tu conexión a internet',
-        'Puede ser un problema temporal de Firebase'
-      ];
-    } else if (error.message.includes('CORS')) {
-      errorMessage = 'Error de conexión (CORS)';
-      hints = [
-        'GitHub Pages puede tener restricciones de CORS',
-        'Considera migrar a Firebase Hosting',
-        'O implementa un proxy en Cloud Functions'
-      ];
     }
-    
-    debugLog('💡 Hints para solucionar', hints);
     
     showError(errorMessage + ': ' + error.message);
     showStep(1);
@@ -535,7 +514,6 @@ function proceedToStep2() {
 // EVENT LISTENERS
 // ============================================
 function initializeEventListeners() {
-  // AUTH - Toggle between login/register
   document.getElementById('show-register')?.addEventListener('click', (e) => {
     e.preventDefault();
     debugLog('🔄 Cambiando a formulario de registro');
@@ -550,13 +528,9 @@ function initializeEventListeners() {
     document.getElementById('email-auth').classList.remove('hidden');
   });
   
-  // AUTH - Login form
   document.getElementById('login-form')?.addEventListener('submit', handleLogin);
-  
-  // AUTH - Register form
   document.getElementById('register-form')?.addEventListener('submit', handleRegister);
   
-  // BILLING - Toggle annual/monthly
   document.querySelectorAll('.toggle-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const cycle = btn.dataset.cycle;
@@ -564,7 +538,6 @@ function initializeEventListeners() {
     });
   });
   
-  // PLANS - Select plan buttons
   document.querySelectorAll('.btn-select-plan').forEach(btn => {
     btn.addEventListener('click', () => {
       const planId = btn.dataset.plan;
@@ -572,13 +545,11 @@ function initializeEventListeners() {
     });
   });
   
-  // CONFIRMATION - Back to plans
   document.getElementById('back-to-plans')?.addEventListener('click', () => {
     debugLog('⬅️ Regresando a selección de planes');
     showStep(2);
   });
   
-  // CONFIRMATION - Proceed to payment
   document.getElementById('proceed-payment')?.addEventListener('click', handleProceedToPayment);
 }
 
@@ -599,17 +570,13 @@ async function handleLogin(e) {
     loadingOverlay.classList.remove('hidden');
     debugLog('⏳ Intentando login...');
     
-    const startTime = Date.now();
     const userCredential = await auth.signInWithEmailAndPassword(email, password);
-    const elapsedTime = Date.now() - startTime;
     
     debugLog('✅ Login manual EXITOSO', {
       email: userCredential.user.email,
-      uid: userCredential.user.uid,
-      timeElapsed: elapsedTime + 'ms'
+      uid: userCredential.user.uid
     });
     
-    // El onAuthStateChanged se encargará del resto
   } catch (error) {
     debugLog('❌ ERROR en login manual', {
       code: error.code,
@@ -629,9 +596,6 @@ async function handleLogin(e) {
       case 'auth/invalid-email':
         errorMessage = 'Email inválido';
         break;
-      case 'auth/too-many-requests':
-        errorMessage = 'Demasiados intentos. Espera un momento.';
-        break;
     }
     
     showError(errorMessage);
@@ -647,22 +611,14 @@ async function handleRegister(e) {
   const password = document.getElementById('register-password').value;
   const loadingOverlay = document.getElementById('auth-loading');
   
-  debugLog('📋 Datos de registro', {
-    name: name,
-    email: email,
-    passwordLength: password.length
-  });
-  
   try {
     loadingOverlay.classList.remove('hidden');
     
-    debugLog('⏳ Creando usuario en Firebase Auth...');
     const userCredential = await auth.createUserWithEmailAndPassword(email, password);
     const userId = userCredential.user.uid;
     
     debugLog('✅ Usuario creado en Auth', userId);
     
-    debugLog('⏳ Creando restaurante en Firestore...');
     const restaurantRef = await db.collection('Restaurants').add({
       name: name,
       email: email,
@@ -693,7 +649,6 @@ async function handleRegister(e) {
     
     debugLog('✅ Restaurante creado', restaurantRef.id);
     
-    debugLog('⏳ Creando usuario en Firestore...');
     await db.collection('Users').doc(userId).set({
       id: userId,
       idRestaurant: restaurantRef.id,
@@ -709,9 +664,7 @@ async function handleRegister(e) {
     debugLog('✅ Usuario vinculado con restaurante');
     
     state.restaurantId = restaurantRef.id;
-    debugLog('✅✅✅ REGISTRO COMPLETO');
     
-    // El onAuthStateChanged se encargará del resto
   } catch (error) {
     debugLog('❌ ERROR en registro', {
       code: error.code,
@@ -728,9 +681,6 @@ async function handleRegister(e) {
       case 'auth/weak-password':
         errorMessage = 'La contraseña debe tener al menos 6 caracteres';
         break;
-      case 'auth/invalid-email':
-        errorMessage = 'Email inválido';
-        break;
     }
     
     showError(errorMessage);
@@ -744,7 +694,6 @@ function selectBillingCycle(cycle) {
   state.selectedCycle = cycle;
   debugLog('💰 Ciclo seleccionado', cycle);
   
-  // Actualizar UI del toggle
   document.querySelectorAll('.toggle-btn').forEach(btn => {
     if (btn.dataset.cycle === cycle) {
       btn.classList.add('active');
@@ -753,7 +702,6 @@ function selectBillingCycle(cycle) {
     }
   });
   
-  // Mostrar/ocultar precios
   document.querySelectorAll('.plan-card').forEach(card => {
     const annualPrices = card.querySelectorAll('.annual');
     const monthlyPrices = card.querySelectorAll('.monthly');
@@ -780,10 +728,7 @@ function selectPlan(planId) {
     planName: state.plans[planId].name
   });
   
-  // Actualizar UI de confirmación
   updateConfirmation();
-  
-  // Ir al paso 3
   showStep(3);
 }
 
@@ -828,15 +773,9 @@ async function handleProceedToPayment() {
   try {
     loadingOverlay.classList.remove('hidden');
     
-    debugLog('🚀 Creando sesión de checkout en Recurrente...');
-    debugLog('📝 Datos para checkout', {
-      restaurantId: state.restaurantId,
-      planId: state.selectedPlan,
-      billingCycle: state.selectedCycle
-    });
+    debugLog('🚀 Creando sesión de checkout...');
     
     const createCheckoutSession = functions.httpsCallable('createCheckoutSession');
-    const startTime = Date.now();
     
     const result = await createCheckoutSession({
       restaurantId: state.restaurantId,
@@ -846,12 +785,7 @@ async function handleProceedToPayment() {
       cancelUrl: 'https://comandaya.com/checkout/?cancelled=true'
     });
     
-    const elapsedTime = Date.now() - startTime;
-    
-    debugLog('✅ Sesión creada', {
-      timeElapsed: elapsedTime + 'ms',
-      response: result.data
-    });
+    debugLog('✅ Sesión creada', result.data);
     
     if (result.data.success && result.data.checkoutUrl) {
       debugLog('🔗 Redirigiendo a Recurrente...', result.data.checkoutUrl);
@@ -862,37 +796,27 @@ async function handleProceedToPayment() {
   } catch (error) {
     debugLog('❌ ERROR creando checkout', {
       message: error.message,
-      code: error.code,
-      details: error.details
+      code: error.code
     });
     
     loadingOverlay.classList.add('hidden');
-    
-    let errorMessage = 'Error al procesar el pago. Por favor intenta nuevamente.';
-    if (error.message) {
-      errorMessage += ' (' + error.message + ')';
-    }
-    
-    showError(errorMessage);
+    showError('Error al procesar el pago: ' + error.message);
   }
 }
 
 // ============================================
-// NAVEGACIÓN ENTRE STEPS
+// NAVEGACIÓN Y UTILIDADES
 // ============================================
 function showStep(stepNumber) {
   state.currentStep = stepNumber;
   debugLog('📍 Cambiando a Step ' + stepNumber);
   
-  // Ocultar todos los steps
   document.querySelectorAll('.checkout-step').forEach(step => {
     step.classList.remove('active');
   });
   
-  // Mostrar el step actual
   document.getElementById(`step-${stepNumber}`).classList.add('active');
   
-  // Actualizar indicadores de progreso
   document.querySelectorAll('.step').forEach((indicator, index) => {
     const stepNum = index + 1;
     if (stepNum <= stepNumber) {
@@ -902,13 +826,9 @@ function showStep(stepNumber) {
     }
   });
   
-  // Scroll to top
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ============================================
-// UTILIDADES
-// ============================================
 function showLoadingMessage(message) {
   debugLog('⏳ Mostrando loading', message);
   
@@ -983,13 +903,11 @@ function showError(message) {
   errorDiv.textContent = message;
   errorDiv.style.display = 'block';
   
-  // Auto-ocultar después de 5 segundos
   setTimeout(() => {
     errorDiv.style.display = 'none';
   }, 5000);
 }
 
-// Agregar CSS para animación del spinner
 const style = document.createElement('style');
 style.textContent = `
   @keyframes spin {
@@ -999,9 +917,6 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// ============================================
-// LOG DE INICIO
-// ============================================
 debugLog('✅ Checkout script cargado completamente');
 debugLog('🔧 Configuración final', {
   projectId: firebaseConfig.projectId,
