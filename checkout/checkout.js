@@ -59,6 +59,8 @@ const state = {
   }
 };
 
+
+
 // ============================================
 // INICIALIZACIÓN
 // ============================================
@@ -113,35 +115,48 @@ document.addEventListener('DOMContentLoaded', () => {
 // ============================================
 async function findRestaurantId(userId) {
   try {
-    console.log('🔍 Buscando restaurante para userId:', userId);
+    addDebugLog('🔍 Buscando restaurante para userId: ' + userId);
     
-    // PASO 1: Buscar el documento del usuario en la colección 'users'
-    const userDoc = await db.collection('users').doc(userId).get();
+    // ✅ CAMBIO: Users con mayúscula
+    addDebugLog('📂 Buscando en colección Users...');
+    const userDoc = await db.collection('Users').doc(userId).get();
     
     if (!userDoc.exists) {
-      console.error('❌ No se encontró el usuario en Firestore');
+      addDebugLog('❌ Usuario no encontrado en Firestore');
+      addDebugLog('📧 Intentando buscar por email...');
       
-      // Intentar buscar por email como fallback
       const user = auth.currentUser;
       if (user && user.email) {
-        console.log('🔍 Intentando buscar por email:', user.email);
+        addDebugLog('Email actual: ' + user.email);
         
-        const userSnapshot = await db.collection('users')
+        // ✅ CAMBIO: Users con mayúscula
+        const userSnapshot = await db.collection('Users')
           .where('email', '==', user.email)
           .limit(1)
           .get();
         
+        addDebugLog('Resultados de búsqueda por email: ' + userSnapshot.size);
+        
         if (!userSnapshot.empty) {
           const userData = userSnapshot.docs[0].data();
+          addDebugLog('✅ Usuario encontrado por email');
+          addDebugLog('idRestaurant: ' + userData.idRestaurant);
+          
           const restaurantId = userData.idRestaurant;
           
           if (restaurantId) {
             state.restaurantId = restaurantId;
-            console.log('✅ Restaurante encontrado por email:', state.restaurantId);
+            addDebugLog('✅ Restaurante asignado: ' + state.restaurantId);
             proceedToStep2();
             return;
+          } else {
+            addDebugLog('❌ idRestaurant está vacío');
           }
+        } else {
+          addDebugLog('❌ No se encontró usuario con ese email');
         }
+      } else {
+        addDebugLog('❌ No hay usuario autenticado o email es null');
       }
       
       showError('No se encontró tu restaurante. Por favor contacta a soporte.');
@@ -149,34 +164,46 @@ async function findRestaurantId(userId) {
       return;
     }
     
-    // PASO 2: Obtener el idRestaurant del usuario
     const userData = userDoc.data();
+    addDebugLog('✅ Usuario encontrado');
+    addDebugLog('Datos del usuario: ' + JSON.stringify({
+      id: userData.id,
+      email: userData.email,
+      idRestaurant: userData.idRestaurant
+    }));
+    
     const restaurantId = userData.idRestaurant;
     
     if (!restaurantId) {
-      console.error('❌ El usuario no tiene idRestaurant asignado');
+      addDebugLog('❌ idRestaurant está vacío o no existe');
       showError('Tu cuenta no está asociada a ningún restaurante. Contacta a soporte.');
       showStep(1);
       return;
     }
     
-    // PASO 3: Verificar que el restaurante existe
-    const restaurantDoc = await db.collection('restaurants').doc(restaurantId).get();
+    addDebugLog('🏪 Verificando restaurante: ' + restaurantId);
+    
+    // ✅ CAMBIO: Restaurants con mayúscula
+    const restaurantDoc = await db.collection('Restaurants').doc(restaurantId).get();
     
     if (!restaurantDoc.exists) {
-      console.error('❌ El restaurante no existe en Firestore');
+      addDebugLog('❌ Restaurante no existe en Firestore');
       showError('Restaurante no encontrado. Contacta a soporte.');
       showStep(1);
       return;
     }
     
-    // Todo OK
+    const restaurantData = restaurantDoc.data();
+    addDebugLog('✅ Restaurante encontrado: ' + restaurantData.name);
+    
     state.restaurantId = restaurantId;
-    console.log('✅ Restaurante encontrado:', state.restaurantId);
+    addDebugLog('✅✅✅ TODO CORRECTO - RestaurantId: ' + state.restaurantId);
     
     proceedToStep2();
     
   } catch (error) {
+    addDebugLog('❌ ERROR: ' + error.message);
+    addDebugLog('Error completo: ' + JSON.stringify(error));
     console.error('❌ Error buscando restaurante:', error);
     showError('Error al cargar tu información. Intenta nuevamente.');
   }

@@ -260,17 +260,22 @@
         const sessionId = urlParams.get('session_id');
 
         // Esperar autenticación y cargar datos
-        auth.onAuthStateChanged(async (user) => {
-            if (user) {
-                try {
-                    // Buscar restaurante del usuario
-                    const snapshot = await db.collection('restaurants')
-                        .where('userId', '==', user.uid)
-                        .limit(1)
-                        .get();
-
-                    if (!snapshot.empty) {
-                        const restaurant = snapshot.docs[0].data();
+       auth.onAuthStateChanged(async (user) => {
+    if (user) {
+        try {
+            // ✅ CAMBIO: Users con mayúscula
+            const userDoc = await db.collection('Users').doc(user.uid).get();
+            
+            if (userDoc.exists) {
+                const userData = userDoc.data();
+                const restaurantId = userData.idRestaurant;
+                
+                if (restaurantId) {
+                    // ✅ CAMBIO: Restaurants con mayúscula
+                    const restaurantDoc = await db.collection('Restaurants').doc(restaurantId).get();
+                    
+                    if (restaurantDoc.exists) {
+                        const restaurant = restaurantDoc.data();
                         
                         // Actualizar UI
                         document.getElementById('plan-name').textContent = 
@@ -279,11 +284,13 @@
                         document.getElementById('billing-cycle').textContent = 
                             restaurant.billingCycle === 'annual' ? 'Anual' : 'Mensual';
                     }
-                } catch (error) {
-                    console.error('Error cargando datos:', error);
                 }
             }
-        });
+        } catch (error) {
+            console.error('Error cargando datos:', error);
+        }
+    }
+});
 
         console.log('✅ Pago exitoso - Session ID:', sessionId);
     </script>
