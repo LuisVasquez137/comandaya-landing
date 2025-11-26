@@ -65,11 +65,27 @@ const state = {
 document.addEventListener('DOMContentLoaded', () => {
   console.log('🚀 Checkout iniciado');
   
-  // Verificar si viene de la app con parámetros
+  // Verificar si viene con token desde la app
   const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get('token');
   const planFromUrl = urlParams.get('plan');
   const cycleFromUrl = urlParams.get('cycle');
   
+  if (token) {
+    // Autenticación automática con token
+    console.log('🔑 Autenticando con custom token...');
+    auth.signInWithCustomToken(token)
+      .then((userCredential) => {
+        console.log('✅ Login automático exitoso:', userCredential.user.email);
+        // El onAuthStateChanged se encargará del resto
+      })
+      .catch((error) => {
+        console.error('❌ Error en login automático:', error);
+        showError('Error de autenticación. Por favor inicia sesión manualmente.');
+      });
+  }
+  
+  // Guardar plan y ciclo si vienen en URL
   if (planFromUrl && state.plans[planFromUrl]) {
     state.selectedPlan = planFromUrl;
     if (cycleFromUrl === 'monthly' || cycleFromUrl === 'annual') {
