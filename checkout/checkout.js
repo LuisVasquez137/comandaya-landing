@@ -4,7 +4,7 @@
 // Con manejo correcto de token + sesión existente
 // ============================================
 
-const DEBUG_MODE = true; // ← Cambiar a false en producción
+const DEBUG_MODE = false; // ← Cambiar a false en producción
 
 function debugLog(message, data = null) {
   console.log(`[DEBUG] ${message}`, data || '');
