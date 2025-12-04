@@ -201,7 +201,7 @@
             </svg>
         </div>
 
-        <h1>¡Pago Exitoso!</h1>
+        <h1>¡Pago Exitoso! 🎉</h1>
         <p>Tu suscripción a ComandaYa ha sido activada correctamente. Ya puedes disfrutar de todas las funcionalidades premium de tu plan.</p>
 
         <div class="info-box" id="subscription-info">
@@ -220,7 +220,8 @@
         </div>
 
         <div class="buttons">
-            <a href="https://play.google.com/store/apps/details?id=com.aplicacion.orderapp" target="_blank" class="btn btn-primary">
+            <!-- ✅ IMPORTANTE: Cambiado el esquema de deep link -->
+            <a href="#" id="open-app-btn" class="btn btn-primary">
                 <span>📱</span>
                 <span>Abrir la App</span>
             </a>
@@ -234,65 +235,48 @@
         </p>
     </div>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-
     <script>
-        // Configuración de Firebase (la misma que en checkout.js)
-        const firebaseConfig = {
-  apiKey: "AIzaSyD0if0ACDfngNzhthGAW_NHcHOikqvIXdo",
-  authDomain: "orderapp-e0c31.firebaseapp.com",
-  projectId: "orderapp-e0c31",
-  storageBucket: "orderapp-e0c31.appspot.com",
-  messagingSenderId: "510382881068",
-  appId: "1:510382881068:web:399ffec02b4e44e3629489",
-  measurementId: "G-PL4WJZ40QP"
-};
-
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-
-        // Obtener session_id de la URL
+        // ✅ NO necesitamos Firebase - leemos directamente de la URL
         const urlParams = new URLSearchParams(window.location.search);
         const sessionId = urlParams.get('session_id');
+        const planName = urlParams.get('plan');
+        const billingCycle = urlParams.get('billing');
 
-        // Esperar autenticación y cargar datos
-       auth.onAuthStateChanged(async (user) => {
-    if (user) {
-        try {
-            // ✅ CAMBIO: Users con mayúscula
-            const userDoc = await db.collection('Users').doc(user.uid).get();
-            
-            if (userDoc.exists) {
-                const userData = userDoc.data();
-                const restaurantId = userData.idRestaurant;
-                
-                if (restaurantId) {
-                    // ✅ CAMBIO: Restaurants con mayúscula
-                    const restaurantDoc = await db.collection('Restaurants').doc(restaurantId).get();
-                    
-                    if (restaurantDoc.exists) {
-                        const restaurant = restaurantDoc.data();
-                        
-                        // Actualizar UI
-                        document.getElementById('plan-name').textContent = 
-                            `Plan ${restaurant.plan ? restaurant.plan.charAt(0).toUpperCase() + restaurant.plan.slice(1) : 'Premium'}`;
-                        
-                        document.getElementById('billing-cycle').textContent = 
-                            restaurant.billingCycle === 'annual' ? 'Anual' : 'Mensual';
-                    }
-                }
-            }
-        } catch (error) {
-            console.error('Error cargando datos:', error);
+        console.log('📦 Datos recibidos:', { sessionId, planName, billingCycle });
+
+        // ✅ Actualizar UI con los datos de la URL
+        if (planName) {
+            document.getElementById('plan-name').textContent = `Plan ${planName}`;
+        } else {
+            document.getElementById('plan-name').textContent = 'Verificando...';
         }
-    }
-});
 
-        console.log('✅ Pago exitoso - Session ID:', sessionId);
+        if (billingCycle) {
+            document.getElementById('billing-cycle').textContent = 
+                billingCycle === 'annual' ? 'Anual' : 'Mensual';
+        } else {
+            document.getElementById('billing-cycle').textContent = 'Verificando...';
+        }
+
+        // ✅ Configurar el botón de abrir app con deep link
+        const openAppBtn = document.getElementById('open-app-btn');
+        
+        // Deep link para tu app (debes configurarlo en AndroidManifest.xml)
+        const deepLink = `comandaya://subscription/success?session_id=${sessionId}`;
+        
+        openAppBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Intentar abrir con deep link
+            window.location.href = deepLink;
+            
+            // Si no funciona después de 2 segundos, ir a Play Store
+            setTimeout(function() {
+                window.location.href = 'https://play.google.com/store/apps/details?id=com.aplicacion.orderapp';
+            }, 2000);
+        });
+
+        console.log('✅ Página de éxito cargada - Session ID:', sessionId);
     </script>
 </body>
 </html>
