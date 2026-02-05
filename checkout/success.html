@@ -174,6 +174,56 @@
             font-weight: 600;
         }
 
+        /* ✅ NUEVO: Countdown */
+        .countdown {
+            margin-top: 24px;
+            font-size: 14px;
+            color: #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .countdown-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #FFC107;
+        }
+
+        /* ✅ NUEVO: Loading dots */
+        .loading-dots {
+            display: inline-flex;
+            gap: 4px;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #FFC107;
+            animation: pulse 1.4s ease-in-out infinite;
+        }
+
+        .dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.3;
+                transform: scale(0.8);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+
         @media (max-width: 768px) {
             .success-container {
                 padding: 32px 24px;
@@ -211,23 +261,32 @@
             </div>
             <div class="info-row">
                 <span class="info-label">Plan:</span>
-                <span class="info-value" id="plan-name">Cargando...</span>
+                <span class="info-value" id="plan-name">Verificando...</span>
             </div>
             <div class="info-row">
                 <span class="info-label">Facturación:</span>
-                <span class="info-value" id="billing-cycle">Cargando...</span>
+                <span class="info-value" id="billing-cycle">Verificando...</span>
             </div>
         </div>
 
         <div class="buttons">
-            <!-- ✅ IMPORTANTE: Cambiado el esquema de deep link -->
             <a href="#" id="open-app-btn" class="btn btn-primary">
                 <span>📱</span>
-                <span>Abrir la App</span>
+                <span>Abrir ComandaYa</span>
             </a>
             <a href="https://comandaya.com" class="btn btn-secondary">
                 <span>← Volver al Inicio</span>
             </a>
+        </div>
+
+        <!-- ✅ NUEVO: Countdown automático -->
+        <div class="countdown" id="countdown">
+            Abriendo app en <span class="countdown-number" id="seconds">3</span> segundos
+            <span class="loading-dots">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </span>
         </div>
 
         <p class="support-text">
@@ -236,7 +295,7 @@
     </div>
 
     <script>
-        // ✅ NO necesitamos Firebase - leemos directamente de la URL
+        // ✅ Leer parámetros de la URL
         const urlParams = new URLSearchParams(window.location.search);
         const sessionId = urlParams.get('session_id');
         const planName = urlParams.get('plan');
@@ -247,36 +306,63 @@
         // ✅ Actualizar UI con los datos de la URL
         if (planName) {
             document.getElementById('plan-name').textContent = `Plan ${planName}`;
-        } else {
-            document.getElementById('plan-name').textContent = 'Verificando...';
         }
 
         if (billingCycle) {
             document.getElementById('billing-cycle').textContent = 
                 billingCycle === 'annual' ? 'Anual' : 'Mensual';
-        } else {
-            document.getElementById('billing-cycle').textContent = 'Verificando...';
         }
 
-        // ✅ Configurar el botón de abrir app con deep link
-        const openAppBtn = document.getElementById('open-app-btn');
+        // ✅ IMPORTANTE: Deep link actualizado para tu configuración
+        // Usa tu esquema: comandaya://subscription/success
+        const deepLink = `comandaya://subscription/success?payment_success=true&session_id=${sessionId || 'unknown'}`;
         
-        // Deep link para tu app (debes configurarlo en AndroidManifest.xml)
-        const deepLink = `comandaya://subscription/success?session_id=${sessionId}`;
-        
-        openAppBtn.addEventListener('click', function(e) {
-            e.preventDefault();
+        console.log('🔗 Deep link:', deepLink);
+
+        // Función para abrir la app
+        function openApp() {
+            console.log('🚀 Abriendo la app...');
             
-            // Intentar abrir con deep link
+            // Intentar abrir la app con deep link
             window.location.href = deepLink;
             
-            // Si no funciona después de 2 segundos, ir a Play Store
+            // Fallback: Si la app no se abre en 2 segundos, ir a Play Store
             setTimeout(function() {
-                window.location.href = 'https://play.google.com/store/apps/details?id=com.aplicacion.orderapp';
+                if (document.hidden) {
+                    console.log('✅ App abierta exitosamente');
+                } else {
+                    console.log('⚠️ App no instalada, redirigiendo a Play Store');
+                    window.location.href = 'https://play.google.com/store/apps/details?id=com.aplicacion.orderapp';
+                }
             }, 2000);
+        }
+
+        // ✅ Countdown automático de 3 segundos
+        let secondsLeft = 3;
+        const countdownElement = document.getElementById('seconds');
+        const countdownContainer = document.getElementById('countdown');
+        
+        const countdownInterval = setInterval(() => {
+            secondsLeft--;
+            countdownElement.textContent = secondsLeft;
+            
+            if (secondsLeft <= 0) {
+                clearInterval(countdownInterval);
+                countdownContainer.textContent = 'Abriendo ComandaYa...';
+                openApp();
+            }
+        }, 1000);
+
+        // ✅ Botón manual para abrir la app inmediatamente
+        const openAppBtn = document.getElementById('open-app-btn');
+        openAppBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            clearInterval(countdownInterval);
+            countdownContainer.textContent = 'Abriendo ComandaYa...';
+            openApp();
         });
 
-        console.log('✅ Página de éxito cargada - Session ID:', sessionId);
+        console.log('✅ Página de éxito cargada correctamente');
     </script>
 </body>
 </html>
