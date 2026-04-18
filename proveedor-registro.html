@@ -660,13 +660,6 @@
         <div class="field-hint">Aquí recibirás las notificaciones de pedidos.</div>
       </div>
 
-      <div class="field">
-        <label for="accesPin">PIN de acceso (4 dígitos) *</label>
-        <input type="number" id="accessPin" placeholder="Ej: 1234" min="1000" max="9999"
-               maxlength="4" oninput="if(this.value.length>4)this.value=this.value.slice(0,4)">
-        <div class="field-hint">Elegí 4 dígitos que recordés fácilmente. Lo usarás para entrar desde otro celular.</div>
-      </div>
-
       <!-- Ubicación -->
       <div class="field">
         <label>Ubicación</label>
@@ -748,6 +741,39 @@
     </div>
 
     <div id="statusStep2" class="msg-err" style="padding:6px 16px;text-align:center;"></div>
+
+    <!-- Botón ajustes flotante -->
+    <div style="padding:0 12px 80px;">
+      <button onclick="abrirAjustes()"
+              style="width:100%;padding:13px;background:#f5f5f5;border:2px solid #e0e0e0;border-radius:12px;font-size:14px;font-weight:700;color:#555;cursor:pointer;">
+        ⚙️ Ajustes de mi cuenta
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL AJUSTES -->
+  <div id="ajustesOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;justify-content:center;"
+       onclick="if(event.target===this)cerrarAjustes()">
+    <div style="background:#fff;border-radius:20px 20px 0 0;padding:24px;width:100%;max-width:480px;max-height:80vh;overflow-y:auto;">
+      <div style="width:40px;height:4px;background:#e0e0e0;border-radius:4px;margin:0 auto 20px;"></div>
+      <h3 style="font-size:18px;font-weight:800;margin-bottom:6px;">Ajustes de cuenta</h3>
+      <p style="font-size:13px;color:#888;margin-bottom:20px;">Cambiá tu número de WhatsApp de acceso.</p>
+      <div style="margin-bottom:14px;">
+        <label style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#555;display:block;margin-bottom:6px;">Nuevo número de WhatsApp</label>
+        <input type="tel" id="nuevoTelefono" placeholder="+502 5555-1234"
+               style="width:100%;padding:14px;border:2px solid #e0e0e0;border-radius:12px;font-size:16px;color:#111;">
+        <div style="font-size:12px;color:#aaa;margin-top:5px;">Este número se usará para entrar al dashboard.</div>
+      </div>
+      <div id="ajustesStatus" style="font-size:13px;min-height:18px;margin-bottom:12px;color:#c62828;"></div>
+      <button onclick="guardarAjustes()"
+              style="width:100%;padding:14px;background:#FFD700;border:none;border-radius:12px;font-size:16px;font-weight:800;cursor:pointer;">
+        Guardar cambios
+      </button>
+      <button onclick="cerrarAjustes()"
+              style="width:100%;padding:12px;background:transparent;border:2px solid #e0e0e0;border-radius:12px;font-size:14px;font-weight:700;color:#888;cursor:pointer;margin-top:10px;">
+        Cancelar
+      </button>
+    </div>
   </div>
 
   <!-- ════════════════════════════════════════
@@ -763,7 +789,7 @@
     <!-- Acceso al dashboard -->
     <div style="background:#f7f7f7;border:2px solid #e0e0e0;border-radius:12px;padding:16px;text-align:left;margin-top:8px;">
       <p style="font-size:14px;color:#555;margin-bottom:12px;text-align:center;">
-        Entrá desde cualquier celular con tu <strong>WhatsApp + PIN</strong> que elegiste.
+        Entrá desde cualquier celular con tu <strong>número de WhatsApp</strong>.
       </p>
       <a href="/proveedor-login.html"
          style="display:block;text-align:center;padding:12px;background:#000;color:#FFD700;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;margin-bottom:10px;">
@@ -978,8 +1004,6 @@ async function guardarPaso1() {
   if (!businessName)  return mark('businessName', 'Ingresá el nombre del negocio.');
   if (!contactName)   return mark('contactName',  'Ingresá tu nombre.');
   if (!whatsappPhone) return mark('whatsappPhone','Ingresá tu número de WhatsApp.');
-  const accessPin = document.getElementById('accessPin').value.trim();
-  if (!accessPin || accessPin.length < 4) return mark('accessPin', 'Elegí un PIN de 4 dígitos.');
 
   // Ubicación
   const manualAddress = val('manualAddress');
@@ -1002,7 +1026,6 @@ async function guardarPaso1() {
     location: gpsData
       ? { lat: gpsData.lat, lng: gpsData.lng }
       : { manualAddress },
-    pin: accessPin,
     hasDelivery,
     registeredAt: firebase.firestore.FieldValue.serverTimestamp(),
     active: true
@@ -1455,6 +1478,32 @@ function mostrarExito() {
   document.getElementById('progressBar').style.display  = 'none';
   document.getElementById('successScreen').style.display = 'block';
   window.scrollTo(0, 0);
+}
+
+// ── Ajustes: cambiar teléfono ──
+function abrirAjustes() {
+  document.getElementById('ajustesOverlay').style.display = 'flex';
+  document.getElementById('nuevoTelefono').value = '';
+  document.getElementById('ajustesStatus').textContent = '';
+}
+function cerrarAjustes() {
+  document.getElementById('ajustesOverlay').style.display = 'none';
+}
+async function guardarAjustes() {
+  const nuevoTel = document.getElementById('nuevoTelefono').value.trim();
+  const statusEl = document.getElementById('ajustesStatus');
+  if (!nuevoTel) { statusEl.textContent = 'Ingresá el nuevo número.'; return; }
+  statusEl.textContent = 'Guardando…';
+  statusEl.style.color = '#555';
+  try {
+    await db.collection('providers').doc(providerId).update({ whatsappPhone: nuevoTel });
+    statusEl.textContent = '✓ Número actualizado. Usalo para entrar al dashboard.';
+    statusEl.style.color = '#2e7d32';
+    setTimeout(cerrarAjustes, 2000);
+  } catch (e) {
+    statusEl.textContent = 'Error: ' + e.message;
+    statusEl.style.color = '#c62828';
+  }
 }
 
 function copiarLinkPersonal() {

@@ -139,30 +139,17 @@
   <!-- ÚNICO PASO: Número de WhatsApp -->
   <div class="step active" id="stepPhone">
     <h2>Ingresá a tu cuenta</h2>
-    <p class="sub">Ingresá tu WhatsApp y el PIN de 4 dígitos que elegiste al registrarte.</p>
+    <p class="sub">Tu número de WhatsApp es tu acceso. No necesitás contraseña.</p>
     <div class="field">
       <label>Tu WhatsApp</label>
       <input type="tel" id="phoneInput" placeholder="+502 5555-1234"
              onkeydown="if(event.key==='Enter') buscarProveedor()">
       <div class="field-hint">El mismo número que usaste al registrarte.</div>
     </div>
-    <div class="field">
-      <label>Tu PIN de 4 dígitos</label>
-      <input type="number" id="pinInput" placeholder="••••"
-             style="font-size:28px;font-weight:900;letter-spacing:6px;text-align:center;"
-             min="1000" max="9999" maxlength="4"
-             oninput="if(this.value.length>4)this.value=this.value.slice(0,4)"
-             onkeydown="if(event.key==='Enter') buscarProveedor()">
-    </div>
     <button class="btn btn-primary" id="btnBuscar" onclick="buscarProveedor()">
       Entrar a mi dashboard
     </button>
     <div class="status" id="statusPhone"></div>
-    <div style="text-align:center;margin-top:14px;font-size:12px;color:#bbb;">
-      ¿Olvidaste tu PIN? Escribinos a
-      <a href="https://wa.me/50234749466" target="_blank" style="color:#FFD700;font-weight:700;">WhatsApp</a>
-      y lo reseteamos.
-    </div>
   </div>
 
 </div>
@@ -198,17 +185,12 @@ if (savedId) {
   window.location.replace('/proveedor-registro.html?providerId=' + savedId);
 }
 
-// ── Buscar proveedor por WhatsApp + PIN ──
+// ── Buscar proveedor por WhatsApp ──
 async function buscarProveedor() {
   const phone = document.getElementById('phoneInput').value.trim();
-  const pin   = document.getElementById('pinInput').value.trim();
 
   if (!phone) {
     setStatusPhone('Ingresá tu número de WhatsApp.', 'err');
-    return;
-  }
-  if (!pin || pin.length < 4) {
-    setStatusPhone('Ingresá tu PIN de 4 dígitos.', 'err');
     return;
   }
 
@@ -237,13 +219,6 @@ async function buscarProveedor() {
     }
 
     const doc = snap.docs[0];
-
-    // Verificar PIN
-    if (doc.data().pin !== pin) {
-      setStatusPhone('PIN incorrecto.', 'err');
-      return;
-    }
-
     const nombre = doc.data().businessName || '';
 
     // Guardar sesión y redirigir
