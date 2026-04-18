@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Acceso Proveedores — ComandaYa</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #000;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+    .logo-wrap { text-align: center; margin-bottom: 32px; }
+    .logo-wrap img { max-height: 56px; display: block; margin: 0 auto 10px; }
+    .logo-wrap h1 { color: #FFD700; font-size: 22px; font-weight: 800; }
+    .logo-wrap p  { color: #888; font-size: 13px; margin-top: 4px; }
+
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 28px 24px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.4);
+    }
+    .card h2 { font-size: 20px; font-weight: 800; margin-bottom: 6px; color: #111; }
+    .card .sub { font-size: 13px; color: #888; margin-bottom: 24px; }
+
+    /* Steps */
+    .step { display: none; }
+    .step.active { display: block; }
+
+    .field { margin-bottom: 18px; }
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: #555;
+      margin-bottom: 6px;
+    }
+    .field input {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 18px;
+      color: #111;
+      background: #fff;
+      transition: border-color .2s;
+      -webkit-appearance: none;
+    }
+    .field input:focus { outline: none; border-color: #FFD700; }
+    .field input.invalid { border-color: #e53935; }
+    .field-hint { font-size: 12px; color: #aaa; margin-top: 5px; }
+
+    /* PIN input grande */
+    .pin-input {
+      font-size: 32px !important;
+      font-weight: 900 !important;
+      letter-spacing: 8px !important;
+      text-align: center !important;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity .2s, transform .1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:active { transform: scale(.98); }
+    .btn-primary { background: #FFD700; color: #000; }
+    .btn-primary:disabled { background: #e0e0e0; color: #aaa; cursor: not-allowed; }
+    .btn-ghost { background: transparent; color: #888; border: 2px solid #e0e0e0; margin-top: 10px; font-size: 14px; padding: 12px; }
+
+    .status {
+      font-size: 13px;
+      min-height: 18px;
+      text-align: center;
+      margin-top: 10px;
+    }
+    .err  { color: #c62828; }
+    .info { color: #555; }
+    .ok   { color: #2e7d32; }
+
+    .spinner {
+      display: inline-block;
+      width: 18px; height: 18px;
+      border: 3px solid rgba(0,0,0,.15);
+      border-top-color: #000;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 18px 0;
+      color: #ccc;
+      font-size: 12px;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #eee;
+    }
+
+    .register-link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 13px;
+      color: #888;
+    }
+    .register-link a { color: #FFD700; font-weight: 700; text-decoration: none; }
+
+    /* Indicador de paso */
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .step-dot {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #aaa;
+    }
+    .step-dot.active { background: #FFD700; color: #000; }
+    .step-dot.done   { background: #111; color: #FFD700; }
+    .step-line { flex: 1; height: 2px; background: #eee; border-radius: 2px; }
+    .step-line.done { background: #111; }
+  </style>
+</head>
+<body>
+
+<div class="logo-wrap">
+  <img src="logo.jpg" alt="ComandaYa" onerror="this.style.display='none'">
+  <h1>ComandaYa</h1>
+  <p>Acceso para proveedores</p>
+</div>
+
+<div class="card">
+  <!-- Indicador -->
+  <div class="step-indicator">
+    <div class="step-dot active" id="sd1">1</div>
+    <div class="step-line" id="sl1"></div>
+    <div class="step-dot" id="sd2">2</div>
+  </div>
+
+  <!-- PASO 1: Número de WhatsApp -->
+  <div class="step active" id="stepPhone">
+    <h2>Ingresá a tu cuenta</h2>
+    <p class="sub">Usá el número de WhatsApp que registraste.</p>
+    <div class="field">
+      <label>Tu WhatsApp</label>
+      <input type="tel" id="phoneInput" placeholder="+502 5555-1234"
+             onkeydown="if(event.key==='Enter') buscarProveedor()">
+      <div class="field-hint">El mismo número que usaste al registrarte.</div>
+    </div>
+    <button class="btn btn-primary" id="btnBuscar" onclick="buscarProveedor()">
+      Continuar →
+    </button>
+    <div class="status" id="statusPhone"></div>
+  </div>
+
+  <!-- PASO 2: PIN -->
+  <div class="step" id="stepPin">
+    <h2>Ingresá tu PIN</h2>
+    <p class="sub" id="pinSub">El PIN de 6 dígitos que recibiste al registrarte.</p>
+    <div class="field">
+      <label>PIN de acceso</label>
+      <input type="number" id="pinInput" class="pin-input"
+             placeholder="000000" maxlength="6"
+             onkeydown="if(event.key==='Enter') verificarPIN()"
+             oninput="if(this.value.length>6)this.value=this.value.slice(0,6)">
+    </div>
+    <button class="btn btn-primary" id="btnVerificar" onclick="verificarPIN()">
+      Entrar al dashboard
+    </button>
+    <button class="btn btn-ghost" onclick="volverAlTelefono()">← Cambiar número</button>
+    <div class="status" id="statusPin"></div>
+    <div style="text-align:center;margin-top:16px;font-size:12px;color:#bbb;">
+      ¿Olvidaste tu PIN? Escribinos a
+      <a href="https://wa.me/50234749466" target="_blank" style="color:#FFD700;font-weight:700;">WhatsApp</a>
+    </div>
+  </div>
+
+</div>
+
+<div class="register-link">
+  ¿Primera vez? <a href="/proveedor-registro.html">Registrate aquí</a>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+<script>
+// ╔══════════════════════════════════════════════════════════╗
+// ║  MISMA CONFIGURACIÓN FIREBASE QUE EN proveedor-registro ║
+// ╚══════════════════════════════════════════════════════════╝
+const firebaseConfig = {
+  apiKey:            "AIzaSyD0if0ACDfngNzhthGAW_NHcHOikqvIXdo",
+  authDomain:        "orderapp-e0c31.firebaseapp.com",
+  projectId:         "orderapp-e0c31",
+  storageBucket:     "orderapp-e0c31.appspot.com",
+  messagingSenderId: "510382881068",
+  appId:             "1:510382881068:web:c8e4e5eaf1c22f93629489"
+};
+// ════════════════════════════════════════════════════════════
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// Si ya tiene sesión en este dispositivo, redirigir directamente
+const savedId = localStorage.getItem('comandaya_provider_id');
+if (savedId) {
+  window.location.replace('/proveedor-registro.html?providerId=' + savedId);
+}
+
+let foundProviderId = null;
+
+// ── Paso 1: buscar por número de WhatsApp ──
+async function buscarProveedor() {
+  const phone = document.getElementById('phoneInput').value.trim();
+  if (!phone) {
+    setStatus('phone', 'Ingresá tu número de WhatsApp.', 'err');
+    return;
+  }
+
+  const btn = document.getElementById('btnBuscar');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Buscando…';
+  setStatus('phone', '', '');
+
+  try {
+    // Buscar por número exacto
+    let snap = await db.collection('providers')
+      .where('whatsappPhone', '==', phone)
+      .limit(1).get();
+
+    // Si no encuentra, probar sin espacios/guiones
+    if (snap.empty) {
+      const clean = phone.replace(/[\s\-]/g, '');
+      snap = await db.collection('providers')
+        .where('whatsappPhone', '==', clean)
+        .limit(1).get();
+    }
+
+    if (snap.empty) {
+      setStatus('phone', 'No encontramos ese número. ¿Te registraste con otro número?', 'err');
+      return;
+    }
+
+    const doc = snap.docs[0];
+    foundProviderId = doc.id;
+    const nombre = doc.data().businessName || '';
+
+    // Pasar a paso 2
+    document.getElementById('stepPhone').classList.remove('active');
+    document.getElementById('stepPin').classList.add('active');
+    if (nombre) {
+      document.getElementById('pinSub').textContent = `Hola, ${nombre}. Ingresá tu PIN de 6 dígitos.`;
+    }
+    // Actualizar indicador
+    document.getElementById('sd1').classList.remove('active');
+    document.getElementById('sd1').classList.add('done');
+    document.getElementById('sd1').textContent = '✓';
+    document.getElementById('sl1').classList.add('done');
+    document.getElementById('sd2').classList.add('active');
+
+    setTimeout(() => document.getElementById('pinInput').focus(), 200);
+  } catch (e) {
+    console.error(e);
+    setStatus('phone', 'Error al buscar: ' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Continuar →';
+  }
+}
+
+// ── Paso 2: verificar PIN ──
+async function verificarPIN() {
+  const pin = document.getElementById('pinInput').value.trim();
+  if (!pin || pin.length < 6) {
+    setStatus('pin', 'El PIN tiene 6 dígitos.', 'err');
+    return;
+  }
+
+  const btn = document.getElementById('btnVerificar');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Verificando…';
+  setStatus('pin', '', '');
+
+  try {
+    const doc = await db.collection('providers').doc(foundProviderId).get();
+    if (!doc.exists) {
+      setStatus('pin', 'No encontramos tu perfil. Intentá registrarte de nuevo.', 'err');
+      return;
+    }
+    const storedPin = doc.data().pin;
+
+    if (pin !== storedPin) {
+      setStatus('pin', 'PIN incorrecto. Verificá los 6 dígitos.', 'err');
+      document.getElementById('pinInput').classList.add('invalid');
+      setTimeout(() => document.getElementById('pinInput').classList.remove('invalid'), 1500);
+      return;
+    }
+
+    // PIN correcto — guardar sesión y redirigir
+    setStatus('pin', '✓ PIN correcto, redirigiendo…', 'ok');
+    localStorage.setItem('comandaya_provider_id', foundProviderId);
+    setTimeout(() => {
+      window.location.replace('/proveedor-registro.html?providerId=' + foundProviderId);
+    }, 800);
+
+  } catch (e) {
+    console.error(e);
+    setStatus('pin', 'Error: ' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Entrar al dashboard';
+  }
+}
+
+function volverAlTelefono() {
+  document.getElementById('stepPin').classList.remove('active');
+  document.getElementById('stepPhone').classList.add('active');
+  document.getElementById('pinInput').value = '';
+  setStatus('pin', '', '');
+  // Reset indicador
+  document.getElementById('sd1').classList.remove('done');
+  document.getElementById('sd1').classList.add('active');
+  document.getElementById('sd1').textContent = '1';
+  document.getElementById('sl1').classList.remove('done');
+  document.getElementById('sd2').classList.remove('active');
+  foundProviderId = null;
+}
+
+function setStatus(step, msg, type) {
+  const el = document.getElementById('status' + (step === 'phone' ? 'Phone' : 'Pin'));
+  el.textContent = msg;
+  el.className = 'status ' + type;
+}
+</script>
+</body>
+</html>

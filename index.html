@@ -429,12 +429,14 @@
             container.innerHTML =
                 '<a href="/proveedor-registro.html?providerId=' + providerId + '" class="btn-proveedor-registered">' +
                 '📦 Ver mis productos en ComandaYa</a>' +
-                '<p class="proveedor-btn-note">Ya estás registrado · Actualizá tus precios cuando quieras</p>';
+                '<p class="proveedor-btn-note">Ya estás registrado en este dispositivo · Actualizá tus precios cuando quieras</p>';
         } else {
             container.innerHTML =
                 '<a href="/proveedor-registro.html" class="btn-proveedor-new">' +
                 '🛒 Registrarme como proveedor</a>' +
-                '<p class="proveedor-btn-note">Gratis · Solo necesitás tu celular</p>';
+                '<p class="proveedor-btn-note">Gratis · Solo necesitás tu celular</p>' +
+                '<a href="/proveedor-login.html" style="display:block;margin-top:10px;font-size:13px;color:#888;text-align:center;text-decoration:underline;">' +
+                'Ya tengo cuenta — Iniciar sesión</a>';
         }
     })();
     </script>
