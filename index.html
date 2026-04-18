@@ -27,6 +27,7 @@
                     <li><a href="#caracteristicas">Características</a></li>
                     <li><a href="#video">Demo</a></li>
                     <li><a href="#galeria">Galería</a></li>
+                    <li><a href="#proveedores">Proveedores</a></li>
                     <li><a href="#contacto">Contacto</a></li>
                     <li class="mobile-only"><a href="https://app.comandaya.com" target="_blank" rel="noopener noreferrer">Portal Web</a></li>
                     <li class="mobile-only"><a href="https://play.google.com/store/apps/details?id=com.aplicacion.orderapp" target="_blank" rel="noopener noreferrer">Descargar App</a></li>
@@ -328,6 +329,29 @@
     </section>
 
     <!-- CTA Section -->
+    <!-- Sección Proveedores -->
+    <section class="proveedores-section" id="proveedores">
+        <div class="container">
+            <div class="proveedores-content">
+                <div class="proveedores-text">
+                    <span class="proveedores-badge">Para proveedores</span>
+                    <h2>¿Vendés insumos a restaurantes?</h2>
+                    <p>Registrate en ComandaYa y empezá a recibir pedidos de restaurantes directamente por WhatsApp. Cargá tus productos, precios y presentaciones en minutos.</p>
+                    <ul class="proveedores-list">
+                        <li>✓ Sin costo para proveedores</li>
+                        <li>✓ Los restaurantes te encuentran solos</li>
+                        <li>✓ Pedidos por WhatsApp</li>
+                    </ul>
+                </div>
+                <div class="proveedores-cta">
+                    <div id="proveedorBtn" class="proveedor-btn-wrap">
+                        <!-- El botón se genera dinámicamente según si ya se registró -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section class="cta-section" id="contacto">
         <div class="container">
             <div class="cta-content">
@@ -395,5 +419,24 @@
     </footer>
 
     <script src="script.js"></script>
+    <script>
+    // Botón inteligente para proveedores
+    (function() {
+        const providerId = localStorage.getItem('comandaya_provider_id');
+        const container  = document.getElementById('proveedorBtn');
+        if (!container) return;
+        if (providerId) {
+            container.innerHTML =
+                '<a href="/proveedor-registro.html?providerId=' + providerId + '" class="btn-proveedor-registered">' +
+                '📦 Ver mis productos en ComandaYa</a>' +
+                '<p class="proveedor-btn-note">Ya estás registrado · Actualizá tus precios cuando quieras</p>';
+        } else {
+            container.innerHTML =
+                '<a href="/proveedor-registro.html" class="btn-proveedor-new">' +
+                '🛒 Registrarme como proveedor</a>' +
+                '<p class="proveedor-btn-note">Gratis · Solo necesitás tu celular</p>';
+        }
+    })();
+    </script>
 </body>
 </html>

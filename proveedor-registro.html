@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Registro de Proveedor — ComandaYa</title>
+  <style>
+    /* ── Reset & base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f7f7f7;
+      color: #111;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: #000;
+      padding: 20px 16px;
+      text-align: center;
+    }
+    #logoImg {
+      max-height: 56px;
+      width: auto;
+      display: block;
+      margin: 0 auto;
+    }
+    header h1 {
+      color: #FFD700;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-top: 10px;
+    }
+    header p {
+      color: #ccc;
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    /* ── Wrapper centrado ── */
+    .page-wrap {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 0 0 80px;
+    }
+
+    /* ── Indicador de progreso ── */
+    .progress-bar {
+      display: flex;
+      background: #fff;
+      border-bottom: 1px solid #e5e5e5;
+      padding: 14px 16px;
+      gap: 8px;
+      align-items: center;
+    }
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+    .step-dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: #aaa;
+      flex-shrink: 0;
+      transition: all .25s;
+    }
+    .step-dot.active { border-color: #FFD700; background: #FFD700; color: #000; }
+    .step-dot.done   { border-color: #FFD700; background: #FFD700; color: #000; }
+    .step-label {
+      font-size: 13px;
+      color: #aaa;
+      font-weight: 600;
+      transition: color .25s;
+    }
+    .step-label.active { color: #111; }
+    .step-connector {
+      flex: 1;
+      height: 2px;
+      background: #e5e5e5;
+      border-radius: 2px;
+      transition: background .25s;
+    }
+    .step-connector.done { background: #FFD700; }
+
+    /* ── Secciones ── */
+    .section { padding: 20px 16px 0; }
+    .section-title {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 4px;
+      color: #111;
+    }
+    .section-sub {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    /* ── Campos de formulario ── */
+    .field { margin-bottom: 18px; }
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: #444;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+    }
+    .field input[type="text"],
+    .field input[type="tel"],
+    .field input[type="number"] {
+      width: 100%;
+      padding: 14px 14px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 16px;
+      color: #111;
+      background: #fff;
+      transition: border-color .2s;
+      -webkit-appearance: none;
+    }
+    .field input:focus {
+      outline: none;
+      border-color: #FFD700;
+    }
+    .field input.invalid { border-color: #e53935; }
+    .field-hint {
+      font-size: 12px;
+      color: #888;
+      margin-top: 5px;
+    }
+
+    /* ── Botón GPS / primario / secundario ── */
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity .2s, transform .1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:active { transform: scale(.98); opacity: .9; }
+    .btn-primary { background: #FFD700; color: #000; }
+    .btn-primary:disabled { background: #e0e0e0; color: #aaa; cursor: not-allowed; transform: none; }
+    .btn-gps {
+      background: #000;
+      color: #FFD700;
+      border: 2px solid #FFD700;
+      margin-bottom: 10px;
+    }
+    .btn-ghost {
+      background: transparent;
+      color: #666;
+      border: 2px solid #e0e0e0;
+    }
+
+    /* ── Toggle SÍ/NO ── */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #fff;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 18px;
+    }
+    .toggle-row-label {
+      font-size: 16px;
+      font-weight: 600;
+      color: #111;
+    }
+    .toggle-row-sub { font-size: 12px; color: #888; margin-top: 2px; }
+    /* Switch */
+    .switch { position: relative; display: inline-block; width: 60px; height: 32px; flex-shrink: 0; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; inset: 0;
+      background: #ccc;
+      border-radius: 32px;
+      transition: background .2s;
+      cursor: pointer;
+    }
+    .slider::before {
+      content: '';
+      position: absolute;
+      width: 24px; height: 24px;
+      left: 4px; bottom: 4px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform .2s;
+      box-shadow: 0 1px 4px rgba(0,0,0,.25);
+    }
+    input:checked + .slider { background: #FFD700; }
+    input:checked + .slider::before { transform: translateX(28px); }
+
+    /* ── Alerta de ubicación ── */
+    .location-box {
+      background: #fff;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 18px;
+    }
+    .location-ok {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: #2e7d32;
+      font-weight: 600;
+    }
+    .location-ok .icon { font-size: 22px; }
+
+    /* ── Status / errores ── */
+    #statusStep1, #statusStep2 {
+      font-size: 13px;
+      min-height: 18px;
+      margin-top: 10px;
+      text-align: center;
+    }
+    .msg-err  { color: #c62828; }
+    .msg-ok   { color: #2e7d32; }
+    .msg-info { color: #555; }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px;
+      background: #eee;
+      margin: 20px 0;
+    }
+
+    /* ── Paso 2: filtro de categorías ── */
+    .cat-filter-wrap {
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .cat-select-mobile {
+      display: block;
+      width: 100%;
+      padding: 13px 40px 13px 16px;
+      border: none;
+      font-size: 15px;
+      font-weight: 600;
+      color: #111;
+      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23333' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 16px center;
+      -webkit-appearance: none;
+      appearance: none;
+      cursor: pointer;
+    }
+    .cat-select-mobile:focus { outline: none; }
+    .cat-tabs-desktop {
+      display: none;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 0 8px;
+      gap: 0;
+      scrollbar-width: none;
+    }
+    .cat-tabs-desktop::-webkit-scrollbar { display: none; }
+    .cat-tab {
+      flex-shrink: 0;
+      padding: 13px 14px;
+      border: none;
+      background: transparent;
+      font-size: 13px;
+      font-weight: 700;
+      color: #888;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      white-space: nowrap;
+      transition: color .15s, border-color .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .cat-tab.active { color: #111; border-bottom-color: #FFD700; }
+    @media (min-width: 520px) {
+      .cat-select-mobile { display: none; }
+      .cat-tabs-desktop  { display: flex; }
+    }
+
+    /* ── Catálogo de productos (grid de tarjetas) ── */
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      padding: 14px 12px;
+    }
+    @media (min-width: 400px) {
+      .catalog-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    .prod-card {
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid #eee;
+      cursor: pointer;
+      position: relative;
+      transition: border-color .15s, box-shadow .15s;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .prod-card.selected {
+      border-color: #FFD700;
+      box-shadow: 0 2px 10px rgba(255,215,0,.4);
+    }
+    .prod-card-img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      display: block;
+      background: #f0f0f0;
+    }
+    .prod-card-placeholder {
+      width: 100%;
+      aspect-ratio: 1;
+      background: #f5f5f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 38px;
+    }
+    .prod-card-body { padding: 8px 8px 10px; }
+    .prod-card-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #111;
+      line-height: 1.3;
+      margin-bottom: 2px;
+    }
+    .prod-card-unit { font-size: 11px; color: #aaa; }
+    .prod-card-offers {
+      font-size: 11px;
+      color: #888;
+      margin-top: 3px;
+      min-height: 14px;
+    }
+    .prod-card.selected .prod-card-offers { color: #9a7800; font-weight: 700; }
+    .prod-card-check {
+      display: none;
+      position: absolute;
+      top: 6px; right: 6px;
+      width: 22px; height: 22px;
+      background: #FFD700;
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 900;
+      box-shadow: 0 1px 4px rgba(0,0,0,.2);
+    }
+    .prod-card.selected .prod-card-check { display: flex; }
+
+    /* ── Drawer / bottom sheet ── */
+    .drawer-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 200;
+    }
+    .drawer-overlay.open { display: block; }
+    .drawer {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 600px;
+      background: #fff;
+      border-radius: 20px 20px 0 0;
+      z-index: 201;
+      max-height: 88vh;
+      overflow-y: auto;
+      animation: slideUp .22s ease;
+    }
+    @keyframes slideUp {
+      from { transform: translateX(-50%) translateY(100%); }
+      to   { transform: translateX(-50%) translateY(0); }
+    }
+    .drawer-handle {
+      width: 40px; height: 4px;
+      background: #ddd;
+      border-radius: 4px;
+      margin: 12px auto 0;
+    }
+    .drawer-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px 12px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .drawer-thumb {
+      width: 52px; height: 52px;
+      border-radius: 10px;
+      object-fit: cover;
+      background: #f0f0f0;
+      flex-shrink: 0;
+    }
+    .drawer-thumb-ph {
+      width: 52px; height: 52px;
+      border-radius: 10px;
+      background: #f5f5f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      flex-shrink: 0;
+    }
+    .drawer-prod-name { font-size: 18px; font-weight: 800; color: #111; }
+    .drawer-prod-cat  { font-size: 12px; color: #888; margin-top: 2px; }
+    .drawer-body { padding: 14px 16px 4px; }
+    .drawer-body-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: #888;
+      margin-bottom: 12px;
+    }
+    /* Fila de oferta */
+    .offer-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .offer-price-wrap { position: relative; flex: 1; }
+    .offer-prefix {
+      position: absolute;
+      left: 11px; top: 50%;
+      transform: translateY(-50%);
+      font-weight: 700;
+      color: #444;
+      font-size: 15px;
+      pointer-events: none;
+    }
+    .offer-price-wrap input {
+      width: 100%;
+      padding: 13px 10px 13px 26px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #111;
+      background: #fff;
+    }
+    .offer-price-wrap input:focus { outline: none; border-color: #FFD700; }
+    .offer-unit-select {
+      padding: 13px 8px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #111;
+      background: #fff;
+      min-width: 88px;
+    }
+    .offer-unit-select:focus { outline: none; border-color: #FFD700; }
+    .offer-del-btn {
+      width: 38px; height: 38px;
+      border: none;
+      background: #fff0f0;
+      border-radius: 8px;
+      font-size: 20px;
+      color: #c62828;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .btn-add-offer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      padding: 11px 14px;
+      background: transparent;
+      border: 2px dashed #ccc;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #666;
+      cursor: pointer;
+      margin-top: 4px;
+      margin-bottom: 14px;
+    }
+    .btn-add-offer:active { background: #f5f5f5; }
+    .drawer-footer {
+      display: flex;
+      gap: 10px;
+      padding: 10px 16px 16px;
+      border-top: 1px solid #f0f0f0;
+    }
+    .drawer-footer.danger { border-top: none; padding-top: 0; }
+    .btn-drawer-cancel {
+      flex: 1;
+      padding: 14px;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      background: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      color: #555;
+      cursor: pointer;
+    }
+    .btn-drawer-save {
+      flex: 2;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      background: #FFD700;
+      font-size: 15px;
+      font-weight: 700;
+      color: #000;
+      cursor: pointer;
+    }
+    .btn-drawer-remove {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: #fff0f0;
+      color: #c62828;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* ── Barra de acción fija ── */
+    .fixed-action {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border-top: 1px solid #e5e5e5;
+      padding: 12px 16px;
+      z-index: 100;
+    }
+    .fixed-action .inner {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* ── Pantalla de éxito ── */
+    #successScreen {
+      display: none;
+      text-align: center;
+      padding: 40px 24px;
+    }
+    #successScreen .emoji { font-size: 72px; margin-bottom: 16px; }
+    #successScreen h2 { font-size: 24px; font-weight: 800; margin-bottom: 10px; }
+    #successScreen p { font-size: 15px; color: #555; line-height: 1.5; }
+    #successScreen .highlight { color: #000; font-weight: 700; }
+
+
+    /* ── Spinner ── */
+    .spinner {
+      display: inline-block;
+      width: 18px; height: 18px;
+      border: 3px solid rgba(0,0,0,.2);
+      border-top-color: #000;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Botón producto personalizado ── */
+    .btn-add-custom {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 14px;
+      background: #fff;
+      border: 2px dashed #FFD700;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #888;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-add-custom:active { background: #fffce8; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <img id="logoImg" src="logo.png" alt="ComandaYa" onerror="this.style.display='none'">
+  <h1>ComandaYa</h1>
+  <p>Registro de proveedor</p>
+</header>
+
+<div class="page-wrap">
+
+  <!-- ── INDICADOR DE PROGRESO ── -->
+  <div class="progress-bar" id="progressBar">
+    <div class="step-indicator">
+      <div class="step-dot active" id="dot1">1</div>
+      <div class="step-label active" id="lbl1">Tu negocio</div>
+    </div>
+    <div class="step-connector" id="conn1"></div>
+    <div class="step-indicator">
+      <div class="step-dot" id="dot2">2</div>
+      <div class="step-label" id="lbl2">Mis productos</div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       PASO 1 — Datos del negocio
+  ════════════════════════════════════════ -->
+  <div id="step1">
+    <div class="section">
+      <div class="section-title">Datos de tu negocio</div>
+      <div class="section-sub">Esta info aparecerá en ComandaYa para que los restaurantes te encuentren.</div>
+
+      <div class="field">
+        <label for="businessName">Nombre del negocio</label>
+        <input type="text" id="businessName" placeholder="Ej: Distribuidora El Carmen">
+      </div>
+
+      <div class="field">
+        <label for="contactName">Tu nombre / vendedor</label>
+        <input type="text" id="contactName" placeholder="Ej: Juan García">
+      </div>
+
+      <div class="field">
+        <label for="whatsappPhone">WhatsApp para pedidos</label>
+        <input type="tel" id="whatsappPhone" placeholder="+502 5555-1234">
+        <div class="field-hint">Aquí recibirás las notificaciones de pedidos.</div>
+      </div>
+
+      <!-- Ubicación -->
+      <div class="field">
+        <label>Ubicación</label>
+        <div class="location-box">
+          <button class="btn btn-gps" id="btnGps" onclick="pedirGPS()">
+            <span>📍</span> Usar mi ubicación actual
+          </button>
+          <div id="locationOk" style="display:none;" class="location-ok">
+            <span class="icon">✅</span>
+            <span id="locationText">Ubicación capturada</span>
+          </div>
+          <div id="locationManualWrap" style="display:none; margin-top:8px;">
+            <input type="text" id="manualAddress" placeholder="Escribe tu dirección completa..." style="width:100%;padding:12px;border:2px solid #e0e0e0;border-radius:10px;font-size:15px;">
+          </div>
+          <button class="btn btn-ghost" id="btnManual" onclick="toggleManual()" style="margin-top:8px; font-size:13px; padding:10px;">
+            Ingresar dirección a mano
+          </button>
+        </div>
+      </div>
+
+      <!-- Toggle delivery -->
+      <div class="toggle-row" id="deliveryToggleRow">
+        <div>
+          <div class="toggle-row-label">¿Hacés delivery?</div>
+          <div class="toggle-row-sub">¿Llevás los productos al restaurante?</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="hasDelivery" onchange="toggleDelivery()">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <!-- Radio de entrega -->
+      <div class="field" id="deliveryRadiusField" style="display:none;">
+        <label for="deliveryRadius">Radio de entrega (km)</label>
+        <input type="number" id="deliveryRadius" placeholder="Ej: 10" min="1" max="200">
+        <div class="field-hint">¿Hasta cuántos kilómetros llegás?</div>
+      </div>
+
+      <div id="statusStep1" class="msg-err"></div>
+    </div>
+
+    <div style="padding: 20px 16px 0;">
+      <button class="btn btn-primary" id="btnNext" onclick="guardarPaso1()">
+        Siguiente — Mis productos →
+      </button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       PASO 2 — Productos y precios
+  ════════════════════════════════════════ -->
+  <div id="step2" style="display:none;">
+    <div class="section" style="padding-bottom:4px;">
+      <div class="section-title">Tus productos</div>
+      <div class="section-sub">Tocá un producto para agregar tu precio. Podés poner varias presentaciones (lb, caja, botella…) para el mismo artículo.</div>
+    </div>
+
+    <!-- Filtro de categoría -->
+    <div class="cat-filter-wrap" id="catFilterWrap" style="display:none;">
+      <select class="cat-select-mobile" id="catSelect" onchange="filtrarCategoria(this.value)">
+        <option value="">Todas las categorías</option>
+      </select>
+      <div class="cat-tabs-desktop" id="catTabs">
+        <button class="cat-tab active" onclick="filtrarCategoria('')" data-cat="">Todas</button>
+      </div>
+    </div>
+
+    <div id="productsLoading" style="text-align:center;padding:40px 16px;color:#888;font-size:14px;">
+      <div class="spinner"></div><br>Cargando catálogo…
+    </div>
+    <div class="catalog-grid" id="catalogGrid" style="display:none;"></div>
+
+    <!-- Botón producto personalizado (aparece luego de cargar) -->
+    <div id="btnCustomWrap" style="display:none; padding:4px 12px 20px;">
+      <button class="btn-add-custom" onclick="abrirDrawerCustom()">
+        ＋ Mi producto no está en la lista
+      </button>
+    </div>
+
+    <div id="statusStep2" class="msg-err" style="padding:6px 16px;text-align:center;"></div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       PANTALLA DE ÉXITO
+  ════════════════════════════════════════ -->
+  <div id="successScreen">
+    <div class="emoji">🎉</div>
+    <h2>¡Ya estás en ComandaYa!</h2>
+    <p style="margin-bottom:20px;">
+      Tu perfil y productos fueron guardados.<br>
+      Te avisaremos por <span class="highlight">WhatsApp</span> cuando un restaurante te haga un pedido.
+    </p>
+    <!-- Link personal para volver a editar desde otro dispositivo -->
+    <div style="background:#fffce8;border:2px solid #FFD700;border-radius:12px;padding:16px;text-align:left;margin-top:8px;">
+      <p style="font-size:13px;font-weight:700;color:#333;margin-bottom:8px;">
+        📎 Guardá este link para actualizar tus precios cuando quieras:
+      </p>
+      <input type="text" id="myPersonalLink" readonly
+             style="width:100%;padding:10px;border:1px solid #e0e0e0;border-radius:8px;font-size:12px;font-family:monospace;background:#fff;margin-bottom:10px;"
+             onclick="this.select()">
+      <button onclick="copiarLinkPersonal()"
+              style="width:100%;padding:12px;background:#FFD700;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;">
+        Copiar mi link personal
+      </button>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<!-- ════════════════════════════════════════
+     DRAWER CUSTOM — Agregar producto propio
+════════════════════════════════════════ -->
+<div class="drawer-overlay" id="drawerCustomOverlay" onclick="cerrarDrawerCustom()"></div>
+<div class="drawer" id="drawerCustom" style="display:none;">
+  <div class="drawer-handle"></div>
+  <div class="drawer-header">
+    <div class="drawer-thumb-ph">📦</div>
+    <div>
+      <div class="drawer-prod-name">Agregar mi producto</div>
+      <div class="drawer-prod-cat">No está en el catálogo general</div>
+    </div>
+  </div>
+  <div class="drawer-body">
+    <div class="field" style="margin-bottom:14px;">
+      <label style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#444;display:block;margin-bottom:6px;">Nombre del producto *</label>
+      <input type="text" id="customProdName" placeholder="Ej: Tortillas de harina" style="width:100%;padding:13px;border:2px solid #e0e0e0;border-radius:10px;font-size:15px;">
+    </div>
+    <div class="field" style="margin-bottom:14px;">
+      <label style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#444;display:block;margin-bottom:6px;">Categoría *</label>
+      <select id="customProdCat" style="width:100%;padding:13px;border:2px solid #e0e0e0;border-radius:10px;font-size:15px;background:#fff;-webkit-appearance:none;">
+        <option value="">-- Seleccionar --</option>
+        <optgroup label="Alimentos frescos">
+          <option>Verduras y Hortalizas</option><option>Frutas</option>
+          <option>Carnes y Aves</option><option>Mariscos y Pescados</option>
+          <option>Lácteos y Huevos</option><option>Embutidos y Fiambres</option>
+        </optgroup>
+        <optgroup label="Despensa">
+          <option>Granos y Cereales</option><option>Harinas y Almidones</option>
+          <option>Pastas y Arroces</option><option>Enlatados y Conservas</option>
+          <option>Aceites y Grasas</option><option>Salsas y Aderezos</option>
+          <option>Especias y Condimentos</option><option>Azúcares y Endulzantes</option>
+          <option>Panadería y Repostería</option>
+        </optgroup>
+        <optgroup label="Bebidas">
+          <option>Bebidas Gaseosas</option><option>Aguas y Hidratantes</option>
+          <option>Jugos y Néctares</option><option>Bebidas Energéticas</option>
+          <option>Cervezas</option><option>Vinos y Espumantes</option>
+          <option>Licores y Destilados</option><option>Café, Té e Infusiones</option>
+        </optgroup>
+        <optgroup label="Otros">
+          <option>Limpieza y Desinfección</option>
+          <option>Desechables y Empaques</option><option>Otros</option>
+        </optgroup>
+      </select>
+    </div>
+    <div class="field" style="margin-bottom:14px;">
+      <label style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#444;display:block;margin-bottom:6px;">Foto del producto (opcional)</label>
+      <div style="display:flex;gap:12px;align-items:center;">
+        <div id="customThumbPreview" style="width:64px;height:64px;border-radius:10px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;overflow:hidden;cursor:pointer;" onclick="document.getElementById('customFileInput').click()">📷</div>
+        <button type="button" onclick="document.getElementById('customFileInput').click()" style="flex:1;padding:12px;border:2px dashed #ccc;border-radius:10px;background:transparent;font-size:14px;font-weight:700;color:#666;cursor:pointer;">Tomar foto o elegir imagen</button>
+      </div>
+      <input type="file" id="customFileInput" accept="image/*" capture="environment" style="display:none;" onchange="previewCustomPhoto(this)">
+    </div>
+    <div id="statusCustom" style="font-size:13px;min-height:16px;text-align:center;margin-bottom:8px;"></div>
+  </div>
+  <div class="drawer-footer">
+    <button class="btn-drawer-cancel" onclick="cerrarDrawerCustom()">Cancelar</button>
+    <button class="btn-drawer-save" id="btnSaveCustom" onclick="guardarProductoCustom()">Continuar →</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     DRAWER — Presentaciones y precios
+════════════════════════════════════════ -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="cerrarDrawer()"></div>
+<div class="drawer" id="drawer" style="display:none;">
+  <div class="drawer-handle"></div>
+  <div class="drawer-header">
+    <div id="drawerThumb"></div>
+    <div>
+      <div class="drawer-prod-name" id="drawerProdName"></div>
+      <div class="drawer-prod-cat"  id="drawerProdCat"></div>
+    </div>
+  </div>
+  <div class="drawer-body">
+    <div class="drawer-body-title">Tus presentaciones y precios</div>
+    <div id="offersContainer"></div>
+    <button class="btn-add-offer" onclick="agregarOferta()">＋ Agregar otra presentación</button>
+  </div>
+  <div class="drawer-footer danger" id="drawerDanger" style="display:none;">
+    <button class="btn-drawer-remove" onclick="desactivarProducto()">Quitar este producto</button>
+  </div>
+  <div class="drawer-footer">
+    <button class="btn-drawer-cancel" onclick="cerrarDrawer()">Cancelar</button>
+    <button class="btn-drawer-save"   onclick="guardarOfertasDrawer()">Confirmar ✓</button>
+  </div>
+</div>
+
+<!-- Barra de acción fija — Paso 2 -->
+<div class="fixed-action" id="fixedAction2" style="display:none;">
+  <div class="inner">
+    <button class="btn btn-primary" id="btnSave" onclick="guardarPaso2()">
+      Guardar mis precios
+    </button>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────────────────────
+     Firebase SDK (compat mode, v9 CDN)
+───────────────────────────────────────────── -->
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+
+<script>
+// ╔══════════════════════════════════════════════════════════╗
+// ║  REEMPLAZA ESTOS VALORES CON TU CONFIGURACIÓN FIREBASE  ║
+// ║  Firebase Console → Project Settings → Your apps →     ║
+// ║  SDK setup and configuration                            ║
+// ╚══════════════════════════════════════════════════════════╝
+const firebaseConfig = {
+  apiKey:            "AIzaSyD0if0ACDfngNzhthGAW_NHcHOikqvIXdo",
+  authDomain:        "orderapp-e0c31.firebaseapp.com",
+  projectId:         "orderapp-e0c31",
+  storageBucket:     "orderapp-e0c31.appspot.com",
+  messagingSenderId: "510382881068",
+  appId:             "1:510382881068:web:c8e4e5eaf1c22f93629489"
+};
+// ════════════════════════════════════════════════════════════
+
+firebase.initializeApp(firebaseConfig);
+const db      = firebase.firestore();
+const storage = firebase.storage();
+
+// ─── Obtener o generar providerId ───
+// Prioridad: 1) parámetro en URL (link personalizado)
+//            2) localStorage (proveedor que vuelve desde el mismo celular)
+//            3) ID nuevo generado por Firestore
+const params = new URLSearchParams(window.location.search);
+let providerId = params.get('providerId')
+              || localStorage.getItem('comandaya_provider_id')
+              || db.collection('providers').doc().id;
+
+// Persistir siempre en localStorage
+localStorage.setItem('comandaya_provider_id', providerId);
+
+// Actualizar URL sin recargar para que el proveedor pueda guardar/compartir su link
+if (!params.get('providerId')) {
+  history.replaceState(null, '', `?providerId=${providerId}`);
+}
+
+// ─── Estado GPS ───
+let gpsData       = null;   // { lat, lng }
+let manualMode    = false;
+
+function pedirGPS() {
+  const btn = document.getElementById('btnGps');
+  btn.textContent = 'Obteniendo ubicación…';
+  btn.disabled = true;
+
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      gpsData = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      document.getElementById('locationOk').style.display = 'flex';
+      document.getElementById('locationText').textContent =
+        `Lat: ${gpsData.lat.toFixed(5)}, Lng: ${gpsData.lng.toFixed(5)}`;
+      document.getElementById('btnGps').style.display     = 'none';
+      document.getElementById('btnManual').style.display  = 'none';
+      document.getElementById('locationManualWrap').style.display = 'none';
+      manualMode = false;
+    },
+    err => {
+      btn.textContent = '📍 Usar mi ubicación actual';
+      btn.disabled = false;
+      setStatus1('No se pudo obtener GPS. Podés ingresar tu dirección a mano.', 'info');
+      document.getElementById('locationManualWrap').style.display = 'block';
+      manualMode = true;
+    },
+    { timeout: 12000, enableHighAccuracy: true }
+  );
+}
+
+function toggleManual() {
+  const wrap = document.getElementById('locationManualWrap');
+  manualMode = !manualMode;
+  wrap.style.display = manualMode ? 'block' : 'none';
+  document.getElementById('btnManual').textContent =
+    manualMode ? 'Cancelar dirección manual' : 'Ingresar dirección a mano';
+  if (!manualMode) gpsData = null;
+}
+
+function toggleDelivery() {
+  const on = document.getElementById('hasDelivery').checked;
+  document.getElementById('deliveryRadiusField').style.display = on ? 'block' : 'none';
+}
+
+// ─── Paso 1: validar y guardar ───
+async function guardarPaso1() {
+  const businessName  = val('businessName');
+  const contactName   = val('contactName');
+  const whatsappPhone = val('whatsappPhone');
+  const hasDelivery   = document.getElementById('hasDelivery').checked;
+  const deliveryKm    = val('deliveryRadius');
+
+  // Validaciones
+  if (!businessName)  return mark('businessName', 'Ingresá el nombre del negocio.');
+  if (!contactName)   return mark('contactName',  'Ingresá tu nombre.');
+  if (!whatsappPhone) return mark('whatsappPhone','Ingresá tu número de WhatsApp.');
+
+  // Ubicación
+  const manualAddress = val('manualAddress');
+  if (!gpsData && !manualAddress) {
+    return setStatus1('Necesitamos tu ubicación. Activá el GPS o ingresá tu dirección.', 'err');
+  }
+
+  if (hasDelivery && !deliveryKm) {
+    return mark('deliveryRadius', 'Ingresá el radio de entrega en km.');
+  }
+
+  const btn = document.getElementById('btnNext');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Guardando…';
+
+  const docData = {
+    businessName,
+    contactName,
+    whatsappPhone,
+    location: gpsData
+      ? { lat: gpsData.lat, lng: gpsData.lng }
+      : { manualAddress },
+    hasDelivery,
+    registeredAt: firebase.firestore.FieldValue.serverTimestamp(),
+    active: true
+  };
+  if (hasDelivery) docData.deliveryRadiusKm = Number(deliveryKm);
+
+  try {
+    await db.collection('providers').doc(providerId).set(docData, { merge: true });
+    irAPaso2();
+  } catch (e) {
+    console.error(e);
+    setStatus1('Error al guardar: ' + e.message, 'err');
+    btn.disabled = false;
+    btn.textContent = 'Siguiente — Mis productos →';
+  }
+}
+
+// ─── Transición a Paso 2 ───
+function irAPaso2() {
+  document.getElementById('step1').style.display  = 'none';
+  document.getElementById('step2').style.display  = 'block';
+  document.getElementById('fixedAction2').style.display = 'block';
+  // Actualizar indicador
+  document.getElementById('dot1').classList.add('done');
+  document.getElementById('conn1').classList.add('done');
+  document.getElementById('dot2').classList.add('active');
+  document.getElementById('lbl2').classList.add('active');
+  window.scrollTo(0, 0);
+  cargarProductos();
+}
+
+// ─── Paso 2: estado ───
+let masterProducts  = [];
+let prevPrices      = {};   // { productId: docData } — datos previos en Firestore
+let activePrices    = {};   // { productId: { active, offers:[{price,unit}] } } — estado en memoria
+let currentCat      = '';
+let drawerProductId = null;
+
+const UNITS = [
+  'bandeja', 'barril', 'bolsa', 'botella', 'caja',
+  'docena',  'g',      'galón', 'kg',      'lata',
+  'lb',      'litro',  'ml',    'oz',      'paquete',
+  'saco',    'sixpack','unidad'
+];
+
+const CAT_EMOJI = {
+  'Verduras y Hortalizas': '🥦', 'Frutas': '🍎', 'Carnes y Aves': '🥩',
+  'Mariscos y Pescados': '🐟', 'Lácteos y Huevos': '🥛', 'Embutidos y Fiambres': '🌭',
+  'Granos y Cereales': '🌾', 'Harinas y Almidones': '🫙', 'Pastas y Arroces': '🍝',
+  'Enlatados y Conservas': '🥫', 'Aceites y Grasas': '🫒', 'Salsas y Aderezos': '🧴',
+  'Especias y Condimentos': '🧂', 'Azúcares y Endulzantes': '🍬', 'Panadería y Repostería': '🍞',
+  'Bebidas Gaseosas': '🥤', 'Aguas y Hidratantes': '💧', 'Jugos y Néctares': '🧃',
+  'Bebidas Energéticas': '⚡', 'Cervezas': '🍺', 'Vinos y Espumantes': '🍷',
+  'Licores y Destilados': '🥃', 'Café, Té e Infusiones': '☕',
+  'Limpieza y Desinfección': '🧹', 'Desechables y Empaques': '📦', 'Otros': '📋',
+};
+
+// ── Cargar catálogo + precios previos ──
+async function cargarProductos() {
+  try {
+    const [snapCat, snapCustom, snapPrices] = await Promise.all([
+      db.collection('masterProducts').where('active', '==', true).orderBy('name').get(),
+      db.collection('providerCustomProducts')
+        .where('providerId', '==', providerId)
+        .where('active', '==', true).get(),
+      db.collection('providerPrices').where('providerId', '==', providerId).get()
+    ]);
+
+    masterProducts = snapCat.docs.map(d => ({ id: d.id, ...d.data() }));
+    // Agregar productos personalizados del proveedor
+    snapCustom.docs.forEach(d => {
+      masterProducts.push({ id: d.id, ...d.data(), isCustom: true });
+    });
+    masterProducts.sort((a, b) => a.name.localeCompare(b.name, 'es'));
+
+    snapPrices.docs.forEach(d => {
+      const data = d.data();
+      prevPrices[data.productId] = data;
+      if (!data.active) return;
+      const offers = data.offers && data.offers.length
+        ? data.offers.map(o => ({ price: o.price, unit: o.unit }))
+        : (data.price ? [{ price: data.price, unit: data.unit || 'unidad' }] : []);
+      if (offers.length) activePrices[data.productId] = { active: true, offers };
+    });
+
+    buildCategoryFilter();
+    renderCatalogo();
+    document.getElementById('btnCustomWrap').style.display = 'block';
+  } catch (e) {
+    document.getElementById('productsLoading').innerHTML =
+      `<span style="color:#c62828">Error al cargar: ${escHtml(e.message)}</span>`;
+  }
+}
+
+// ── Filtro de categorías ──
+function buildCategoryFilter() {
+  const cats = [...new Set(masterProducts.map(p => p.category))].sort();
+  if (!cats.length) return;
+  const select = document.getElementById('catSelect');
+  const tabs   = document.getElementById('catTabs');
+  cats.forEach(cat => {
+    const emoji = CAT_EMOJI[cat] || '📋';
+    const opt = document.createElement('option');
+    opt.value = cat; opt.textContent = `${emoji} ${cat}`;
+    select.appendChild(opt);
+    const btn = document.createElement('button');
+    btn.className = 'cat-tab'; btn.dataset.cat = cat;
+    btn.textContent = `${emoji} ${cat}`;
+    btn.onclick = () => filtrarCategoria(cat);
+    tabs.appendChild(btn);
+  });
+  document.getElementById('catFilterWrap').style.display = 'block';
+}
+
+function filtrarCategoria(cat) {
+  currentCat = cat;
+  document.getElementById('catSelect').value = cat;
+  document.querySelectorAll('.cat-tab').forEach(t =>
+    t.classList.toggle('active', t.dataset.cat === cat));
+  renderCatalogo();
+}
+
+// ── Renderizar catálogo ──
+function renderCatalogo() {
+  document.getElementById('productsLoading').style.display = 'none';
+  const grid = document.getElementById('catalogGrid');
+  const visible = currentCat
+    ? masterProducts.filter(p => p.category === currentCat)
+    : masterProducts;
+
+  if (!visible.length) {
+    grid.style.display = 'none';
+    setStatus2('No hay productos en esta categoría.', 'info');
+    return;
+  }
+  setStatus2('', '');
+  grid.style.display = 'grid';
+  grid.innerHTML = visible.map(p => cardHtml(p)).join('');
+}
+
+function cardHtml(p) {
+  const emoji   = CAT_EMOJI[p.category] || '📋';
+  const state   = activePrices[p.id];
+  const isActive = state && state.active && state.offers && state.offers.length > 0;
+  const label   = isActive
+    ? (state.offers.length === 1
+        ? `Q${state.offers[0].price} / ${state.offers[0].unit}`
+        : `${state.offers.length} presentaciones`)
+    : '';
+  const imgHtml = p.imageUrl
+    ? `<img class="prod-card-img" src="${escHtml(p.imageUrl)}" alt="${escHtml(p.name)}" loading="lazy">`
+    : `<div class="prod-card-placeholder">${emoji}</div>`;
+  const customBadge = p.isCustom
+    ? `<div style="position:absolute;top:6px;left:6px;background:#000;color:#FFD700;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;letter-spacing:.4px;">MÍO</div>`
+    : '';
+  return `
+    <div class="prod-card ${isActive ? 'selected' : ''}" id="card_${p.id}" onclick="abrirDrawer('${p.id}')">
+      <div class="prod-card-check">✓</div>
+      ${customBadge}
+      ${imgHtml}
+      <div class="prod-card-body">
+        <div class="prod-card-name">${escHtml(p.name)}</div>
+        <div class="prod-card-unit">${escHtml(p.category)}</div>
+        <div class="prod-card-offers" id="offerlabel_${p.id}">${escHtml(label)}</div>
+      </div>
+    </div>`;
+}
+
+function actualizarTarjeta(productId) {
+  const card  = document.getElementById(`card_${productId}`);
+  const label = document.getElementById(`offerlabel_${productId}`);
+  if (!card) return;
+  const state    = activePrices[productId];
+  const isActive = state && state.active && state.offers && state.offers.length > 0;
+  card.classList.toggle('selected', isActive);
+  if (label) {
+    label.textContent = isActive
+      ? (state.offers.length === 1
+          ? `Q${state.offers[0].price} / ${state.offers[0].unit}`
+          : `${state.offers.length} presentaciones`)
+      : '';
+  }
+}
+
+// ── Drawer ──
+function abrirDrawer(productId) {
+  const p = masterProducts.find(x => x.id === productId);
+  if (!p) return;
+  drawerProductId = productId;
+  const emoji = CAT_EMOJI[p.category] || '📋';
+
+  document.getElementById('drawerProdName').textContent = p.name;
+  document.getElementById('drawerProdCat').textContent  = `${emoji} ${p.category} · base: ${p.unit}`;
+  document.getElementById('drawerThumb').innerHTML = p.imageUrl
+    ? `<img class="drawer-thumb" src="${escHtml(p.imageUrl)}" alt="${escHtml(p.name)}">`
+    : `<div class="drawer-thumb-ph">${emoji}</div>`;
+
+  const isActive = activePrices[productId] && activePrices[productId].active;
+  document.getElementById('drawerDanger').style.display = isActive ? 'flex' : 'none';
+
+  const initOffers = (activePrices[productId] && activePrices[productId].offers && activePrices[productId].offers.length)
+    ? activePrices[productId].offers.map(o => ({ ...o }))
+    : [{ price: '', unit: p.unit }];
+
+  renderOfferRows(initOffers, p.unit);
+
+  document.getElementById('drawer').style.display = 'block';
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function cerrarDrawer() {
+  document.getElementById('drawer').style.display = 'none';
+  document.getElementById('drawerOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+  drawerProductId = null;
+}
+
+function renderOfferRows(offers, defaultUnit) {
+  const container = document.getElementById('offersContainer');
+  container.innerHTML = '';
+  offers.forEach((o, i) => {
+    const selectedUnit = o.unit || defaultUnit;
+    const opts = UNITS.map(u =>
+      `<option value="${u}" ${u === selectedUnit ? 'selected' : ''}>${u}</option>`
+    ).join('');
+    const row = document.createElement('div');
+    row.className = 'offer-row';
+    row.innerHTML = `
+      <div class="offer-price-wrap">
+        <span class="offer-prefix">Q</span>
+        <input type="number" class="offer-price-input" data-idx="${i}"
+               placeholder="0.00" min="0" step="0.01"
+               value="${o.price !== '' ? o.price : ''}">
+      </div>
+      <select class="offer-unit-select" data-idx="${i}" onchange="refreshUnitOptions()">${opts}</select>
+      <button class="offer-del-btn" onclick="eliminarOferta(${i})">×</button>`;
+    container.appendChild(row);
+  });
+  if (offers.length === 1) container.querySelector('.offer-del-btn').style.display = 'none';
+  refreshUnitOptions();
+}
+
+// Deshabilita en cada select las unidades ya elegidas en los otros
+function refreshUnitOptions() {
+  const selects = Array.from(
+    document.getElementById('offersContainer').querySelectorAll('.offer-unit-select')
+  );
+  const chosen = selects.map(s => s.value);
+  selects.forEach((sel, i) => {
+    const othersChosen = chosen.filter((_, j) => j !== i);
+    Array.from(sel.options).forEach(opt => {
+      opt.disabled = othersChosen.includes(opt.value);
+    });
+  });
+}
+
+function leerOffersDelDOM() {
+  const prices = document.getElementById('offersContainer').querySelectorAll('.offer-price-input');
+  const units  = document.getElementById('offersContainer').querySelectorAll('.offer-unit-select');
+  return Array.from(prices).map((inp, i) => ({ price: inp.value, unit: units[i].value }));
+}
+
+function agregarOferta() {
+  const p = masterProducts.find(x => x.id === drawerProductId);
+  const data = leerOffersDelDOM();
+  data.push({ price: '', unit: p ? p.unit : 'unidad' });
+  renderOfferRows(data, p ? p.unit : 'unidad');
+  const inputs = document.getElementById('offersContainer').querySelectorAll('.offer-price-input');
+  if (inputs.length) inputs[inputs.length - 1].focus();
+}
+
+function eliminarOferta(idx) {
+  const p = masterProducts.find(x => x.id === drawerProductId);
+  const data = leerOffersDelDOM();
+  data.splice(idx, 1);
+  renderOfferRows(data, p ? p.unit : 'unidad');
+}
+
+function guardarOfertasDrawer() {
+  const raw = leerOffersDelDOM();
+  const invalidos = raw.filter(o => !o.price || parseFloat(o.price) <= 0);
+  if (invalidos.length) {
+    setStatus2('Todos los precios deben ser mayores a 0.', 'err');
+    return;
+  }
+  activePrices[drawerProductId] = {
+    active: true,
+    offers: raw.map(o => ({ price: parseFloat(o.price), unit: o.unit }))
+  };
+  actualizarTarjeta(drawerProductId);
+  cerrarDrawer();
+  setStatus2('', '');
+}
+
+function desactivarProducto() {
+  if (!drawerProductId) return;
+  activePrices[drawerProductId] = { active: false, offers: [] };
+  actualizarTarjeta(drawerProductId);
+  cerrarDrawer();
+}
+
+// ── Drawer de producto personalizado ──
+let customSelectedFile = null;
+
+function abrirDrawerCustom() {
+  document.getElementById('customProdName').value = '';
+  document.getElementById('customProdCat').value  = '';
+  document.getElementById('customFileInput').value = '';
+  document.getElementById('customThumbPreview').innerHTML = '📷';
+  document.getElementById('statusCustom').textContent = '';
+  customSelectedFile = null;
+  document.getElementById('drawerCustom').style.display = 'block';
+  document.getElementById('drawerCustomOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('customProdName').focus(), 300);
+}
+
+function cerrarDrawerCustom() {
+  document.getElementById('drawerCustom').style.display = 'none';
+  document.getElementById('drawerCustomOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function previewCustomPhoto(input) {
+  customSelectedFile = input.files[0] || null;
+  const preview = document.getElementById('customThumbPreview');
+  if (customSelectedFile) {
+    const url = URL.createObjectURL(customSelectedFile);
+    preview.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;">`;
+  } else {
+    preview.innerHTML = '📷';
+  }
+}
+
+async function guardarProductoCustom() {
+  const name     = document.getElementById('customProdName').value.trim();
+  const category = document.getElementById('customProdCat').value;
+  if (!name)     return setStatusCustom('Escribí el nombre del producto.');
+  if (!category) return setStatusCustom('Seleccioná una categoría.');
+
+  const btn = document.getElementById('btnSaveCustom');
+  btn.disabled = true;
+  btn.textContent = 'Guardando…';
+
+  try {
+    const docRef    = db.collection('providerCustomProducts').doc();
+    const productId = docRef.id;
+    let imageUrl    = '';
+
+    if (customSelectedFile) {
+      const ext  = customSelectedFile.name.split('.').pop().toLowerCase();
+      const path = `providerCustomProducts/${providerId}/${productId}/image.${ext}`;
+      const ref  = storage.ref(path);
+      await ref.put(customSelectedFile);
+      imageUrl = await ref.getDownloadURL();
+    }
+
+    await docRef.set({
+      id: productId,
+      providerId,
+      name,
+      category,
+      imageUrl,
+      active: true,
+      isCustom: true,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    // Agregar al array local y re-renderizar
+    const newProd = { id: productId, providerId, name, category, imageUrl, active: true, isCustom: true };
+    masterProducts.push(newProd);
+    masterProducts.sort((a, b) => a.name.localeCompare(b.name, 'es'));
+
+    // Reconstruir filtros (nueva categoría puede haber aparecido)
+    document.getElementById('catSelect').innerHTML = '<option value="">Todas las categorías</option>';
+    document.getElementById('catTabs').innerHTML   = '<button class="cat-tab active" onclick="filtrarCategoria(\'\')" data-cat="">Todas</button>';
+    buildCategoryFilter();
+    renderCatalogo();
+
+    cerrarDrawerCustom();
+    // Abrir inmediatamente el drawer de precios para el nuevo producto
+    setTimeout(() => abrirDrawer(productId), 200);
+  } catch (e) {
+    console.error(e);
+    setStatusCustom('Error: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Continuar →';
+  }
+}
+
+function setStatusCustom(msg) {
+  document.getElementById('statusCustom').textContent = msg;
+  document.getElementById('statusCustom').style.color = '#c62828';
+}
+
+// ─── Paso 2: guardar todo en Firestore ───
+async function guardarPaso2() {
+  const btn = document.getElementById('btnSave');
+  setStatus2('', '');
+
+  const activos = Object.entries(activePrices).filter(([, v]) => v.active && v.offers.length > 0);
+  if (!activos.length) {
+    return setStatus2('Agregá al menos un producto con precio para continuar.', 'err');
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Guardando…';
+
+  try {
+    const batch = db.batch();
+    const now   = firebase.firestore.FieldValue.serverTimestamp();
+
+    // Guardar/actualizar todos los productos con cambios
+    Object.entries(activePrices).forEach(([productId, state]) => {
+      const docId  = `${providerId}_${productId}`;
+      const prod   = masterProducts.find(p => p.id === productId);
+      batch.set(db.collection('providerPrices').doc(docId), {
+        id: docId, providerId, productId,
+        productName: prod ? prod.name : '',
+        offers:  state.active ? state.offers : [],
+        active:  state.active,
+        updatedAt: now
+      });
+    });
+
+    // Desactivar previos que el proveedor no tocó pero estaban activos
+    Object.keys(prevPrices).forEach(productId => {
+      if (!activePrices[productId] && prevPrices[productId].active) {
+        const docId = `${providerId}_${productId}`;
+        batch.update(db.collection('providerPrices').doc(docId),
+          { active: false, offers: [], updatedAt: now });
+      }
+    });
+
+    await batch.commit();
+    mostrarExito();
+  } catch (e) {
+    console.error(e);
+    setStatus2('Error al guardar: ' + e.message, 'err');
+    btn.disabled = false;
+    btn.textContent = 'Guardar mis precios';
+  }
+}
+
+function mostrarExito() {
+  document.getElementById('step2').style.display        = 'none';
+  document.getElementById('fixedAction2').style.display = 'none';
+  document.getElementById('progressBar').style.display  = 'none';
+  document.getElementById('successScreen').style.display = 'block';
+  // Rellenar link personal (URL actual ya tiene ?providerId=XXX gracias a history.replaceState)
+  document.getElementById('myPersonalLink').value = window.location.href;
+  window.scrollTo(0, 0);
+}
+
+function copiarLinkPersonal() {
+  const link = window.location.href;
+  navigator.clipboard.writeText(link).catch(() => {
+    document.getElementById('myPersonalLink').select();
+    document.execCommand('copy');
+  });
+  const btn = event.target;
+  btn.textContent = '✓ Copiado';
+  setTimeout(() => { btn.textContent = 'Copiar mi link personal'; }, 2000);
+}
+
+// ─── Helpers ───
+function val(id) {
+  return document.getElementById(id)?.value?.trim() || '';
+}
+function mark(id, msg) {
+  document.getElementById(id).classList.add('invalid');
+  setStatus1(msg, 'err');
+  document.getElementById(id).focus();
+}
+function setStatus1(msg, type) {
+  const el = document.getElementById('statusStep1');
+  el.textContent = msg;
+  el.className = type === 'err' ? 'msg-err' : type === 'ok' ? 'msg-ok' : 'msg-info';
+}
+function setStatus2(msg, type) {
+  const el = document.getElementById('statusStep2');
+  el.textContent = msg;
+  el.className = type === 'err' ? 'msg-err' : type === 'ok' ? 'msg-ok' : 'msg-info';
+}
+function escHtml(str = '') {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Limpiar clase invalid al escribir
+document.addEventListener('input', e => {
+  if (e.target.tagName === 'INPUT') e.target.classList.remove('invalid');
+});
+</script>
+</body>
+</html>
