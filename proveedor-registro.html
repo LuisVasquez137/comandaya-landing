@@ -660,6 +660,13 @@
         <div class="field-hint">Aquí recibirás las notificaciones de pedidos.</div>
       </div>
 
+      <div class="field">
+        <label for="accesPin">PIN de acceso (4 dígitos) *</label>
+        <input type="number" id="accessPin" placeholder="Ej: 1234" min="1000" max="9999"
+               maxlength="4" oninput="if(this.value.length>4)this.value=this.value.slice(0,4)">
+        <div class="field-hint">Elegí 4 dígitos que recordés fácilmente. Lo usarás para entrar desde otro celular.</div>
+      </div>
+
       <!-- Ubicación -->
       <div class="field">
         <label>Ubicación</label>
@@ -756,8 +763,7 @@
     <!-- Acceso al dashboard -->
     <div style="background:#f7f7f7;border:2px solid #e0e0e0;border-radius:12px;padding:16px;text-align:left;margin-top:8px;">
       <p style="font-size:14px;color:#555;margin-bottom:12px;text-align:center;">
-        Podés volver a entrar en cualquier momento usando tu número de WhatsApp en
-        <a href="/proveedor-login.html" style="color:#000;font-weight:700;text-decoration:underline;">proveedor-login.html</a>.
+        Entrá desde cualquier celular con tu <strong>WhatsApp + PIN</strong> que elegiste.
       </p>
       <a href="/proveedor-login.html"
          style="display:block;text-align:center;padding:12px;background:#000;color:#FFD700;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;margin-bottom:10px;">
@@ -972,6 +978,8 @@ async function guardarPaso1() {
   if (!businessName)  return mark('businessName', 'Ingresá el nombre del negocio.');
   if (!contactName)   return mark('contactName',  'Ingresá tu nombre.');
   if (!whatsappPhone) return mark('whatsappPhone','Ingresá tu número de WhatsApp.');
+  const accessPin = document.getElementById('accessPin').value.trim();
+  if (!accessPin || accessPin.length < 4) return mark('accessPin', 'Elegí un PIN de 4 dígitos.');
 
   // Ubicación
   const manualAddress = val('manualAddress');
@@ -994,6 +1002,7 @@ async function guardarPaso1() {
     location: gpsData
       ? { lat: gpsData.lat, lng: gpsData.lng }
       : { manualAddress },
+    pin: accessPin,
     hasDelivery,
     registeredAt: firebase.firestore.FieldValue.serverTimestamp(),
     active: true
