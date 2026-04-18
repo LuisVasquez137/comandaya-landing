@@ -61,14 +61,6 @@
     .field input.invalid { border-color: #e53935; }
     .field-hint { font-size: 12px; color: #aaa; margin-top: 5px; }
 
-    /* PIN input grande */
-    .pin-input {
-      font-size: 32px !important;
-      font-weight: 900 !important;
-      letter-spacing: 8px !important;
-      text-align: center !important;
-    }
-
     .btn {
       display: flex;
       align-items: center;
@@ -133,28 +125,6 @@
     }
     .register-link a { color: #FFD700; font-weight: 700; text-decoration: none; }
 
-    /* Indicador de paso */
-    .step-indicator {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 20px;
-    }
-    .step-dot {
-      width: 28px; height: 28px;
-      border-radius: 50%;
-      background: #f0f0f0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 700;
-      color: #aaa;
-    }
-    .step-dot.active { background: #FFD700; color: #000; }
-    .step-dot.done   { background: #111; color: #FFD700; }
-    .step-line { flex: 1; height: 2px; background: #eee; border-radius: 2px; }
-    .step-line.done { background: #111; }
   </style>
 </head>
 <body>
@@ -166,17 +136,10 @@
 </div>
 
 <div class="card">
-  <!-- Indicador -->
-  <div class="step-indicator">
-    <div class="step-dot active" id="sd1">1</div>
-    <div class="step-line" id="sl1"></div>
-    <div class="step-dot" id="sd2">2</div>
-  </div>
-
-  <!-- PASO 1: Número de WhatsApp -->
+  <!-- ÚNICO PASO: Número de WhatsApp -->
   <div class="step active" id="stepPhone">
     <h2>Ingresá a tu cuenta</h2>
-    <p class="sub">Usá el número de WhatsApp que registraste.</p>
+    <p class="sub">Tu número de WhatsApp es tu acceso. No necesitás contraseña.</p>
     <div class="field">
       <label>Tu WhatsApp</label>
       <input type="tel" id="phoneInput" placeholder="+502 5555-1234"
@@ -184,31 +147,9 @@
       <div class="field-hint">El mismo número que usaste al registrarte.</div>
     </div>
     <button class="btn btn-primary" id="btnBuscar" onclick="buscarProveedor()">
-      Continuar →
+      Entrar a mi dashboard
     </button>
     <div class="status" id="statusPhone"></div>
-  </div>
-
-  <!-- PASO 2: PIN -->
-  <div class="step" id="stepPin">
-    <h2>Ingresá tu PIN</h2>
-    <p class="sub" id="pinSub">El PIN de 6 dígitos que recibiste al registrarte.</p>
-    <div class="field">
-      <label>PIN de acceso</label>
-      <input type="number" id="pinInput" class="pin-input"
-             placeholder="000000" maxlength="6"
-             onkeydown="if(event.key==='Enter') verificarPIN()"
-             oninput="if(this.value.length>6)this.value=this.value.slice(0,6)">
-    </div>
-    <button class="btn btn-primary" id="btnVerificar" onclick="verificarPIN()">
-      Entrar al dashboard
-    </button>
-    <button class="btn btn-ghost" onclick="volverAlTelefono()">← Cambiar número</button>
-    <div class="status" id="statusPin"></div>
-    <div style="text-align:center;margin-top:16px;font-size:12px;color:#bbb;">
-      ¿Olvidaste tu PIN? Escribinos a
-      <a href="https://wa.me/50234749466" target="_blank" style="color:#FFD700;font-weight:700;">WhatsApp</a>
-    </div>
   </div>
 
 </div>
@@ -244,20 +185,18 @@ if (savedId) {
   window.location.replace('/proveedor-registro.html?providerId=' + savedId);
 }
 
-let foundProviderId = null;
-
-// ── Paso 1: buscar por número de WhatsApp ──
+// ── Buscar proveedor por WhatsApp y entrar directo ──
 async function buscarProveedor() {
   const phone = document.getElementById('phoneInput').value.trim();
   if (!phone) {
-    setStatus('phone', 'Ingresá tu número de WhatsApp.', 'err');
+    setStatus('No encontramos ese número. ¿Te registraste con otro número?', 'err');
     return;
   }
 
   const btn = document.getElementById('btnBuscar');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Buscando…';
-  setStatus('phone', '', '');
+  setStatusPhone('', '');
 
   try {
     // Buscar por número exacto
@@ -274,97 +213,31 @@ async function buscarProveedor() {
     }
 
     if (snap.empty) {
-      setStatus('phone', 'No encontramos ese número. ¿Te registraste con otro número?', 'err');
+      setStatusPhone('No encontramos ese número. ¿Te registraste con otro número?', 'err');
       return;
     }
 
     const doc = snap.docs[0];
-    foundProviderId = doc.id;
     const nombre = doc.data().businessName || '';
 
-    // Pasar a paso 2
-    document.getElementById('stepPhone').classList.remove('active');
-    document.getElementById('stepPin').classList.add('active');
-    if (nombre) {
-      document.getElementById('pinSub').textContent = `Hola, ${nombre}. Ingresá tu PIN de 6 dígitos.`;
-    }
-    // Actualizar indicador
-    document.getElementById('sd1').classList.remove('active');
-    document.getElementById('sd1').classList.add('done');
-    document.getElementById('sd1').textContent = '✓';
-    document.getElementById('sl1').classList.add('done');
-    document.getElementById('sd2').classList.add('active');
-
-    setTimeout(() => document.getElementById('pinInput').focus(), 200);
-  } catch (e) {
-    console.error(e);
-    setStatus('phone', 'Error al buscar: ' + e.message, 'err');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Continuar →';
-  }
-}
-
-// ── Paso 2: verificar PIN ──
-async function verificarPIN() {
-  const pin = document.getElementById('pinInput').value.trim();
-  if (!pin || pin.length < 6) {
-    setStatus('pin', 'El PIN tiene 6 dígitos.', 'err');
-    return;
-  }
-
-  const btn = document.getElementById('btnVerificar');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Verificando…';
-  setStatus('pin', '', '');
-
-  try {
-    const doc = await db.collection('providers').doc(foundProviderId).get();
-    if (!doc.exists) {
-      setStatus('pin', 'No encontramos tu perfil. Intentá registrarte de nuevo.', 'err');
-      return;
-    }
-    const storedPin = doc.data().pin;
-
-    if (pin !== storedPin) {
-      setStatus('pin', 'PIN incorrecto. Verificá los 6 dígitos.', 'err');
-      document.getElementById('pinInput').classList.add('invalid');
-      setTimeout(() => document.getElementById('pinInput').classList.remove('invalid'), 1500);
-      return;
-    }
-
-    // PIN correcto — guardar sesión y redirigir
-    setStatus('pin', '✓ PIN correcto, redirigiendo…', 'ok');
-    localStorage.setItem('comandaya_provider_id', foundProviderId);
+    // Guardar sesión y redirigir directamente
+    setStatusPhone(`✓ Hola${nombre ? ', ' + nombre : ''}. Entrando…`, 'ok');
+    localStorage.setItem('comandaya_provider_id', doc.id);
     setTimeout(() => {
-      window.location.replace('/proveedor-registro.html?providerId=' + foundProviderId);
+      window.location.replace('/proveedor-registro.html?providerId=' + doc.id);
     }, 800);
 
   } catch (e) {
     console.error(e);
-    setStatus('pin', 'Error: ' + e.message, 'err');
+    setStatusPhone('Error al buscar: ' + e.message, 'err');
   } finally {
     btn.disabled = false;
-    btn.textContent = 'Entrar al dashboard';
+    btn.textContent = 'Entrar a mi dashboard';
   }
 }
 
-function volverAlTelefono() {
-  document.getElementById('stepPin').classList.remove('active');
-  document.getElementById('stepPhone').classList.add('active');
-  document.getElementById('pinInput').value = '';
-  setStatus('pin', '', '');
-  // Reset indicador
-  document.getElementById('sd1').classList.remove('done');
-  document.getElementById('sd1').classList.add('active');
-  document.getElementById('sd1').textContent = '1';
-  document.getElementById('sl1').classList.remove('done');
-  document.getElementById('sd2').classList.remove('active');
-  foundProviderId = null;
-}
-
-function setStatus(step, msg, type) {
-  const el = document.getElementById('status' + (step === 'phone' ? 'Phone' : 'Pin'));
+function setStatusPhone(msg, type) {
+  const el = document.getElementById('statusPhone');
   el.textContent = msg;
   el.className = 'status ' + type;
 }
