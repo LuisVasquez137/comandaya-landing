@@ -7,6 +7,7 @@
     <meta name="keywords" content="restaurante, gestión, pedidos, cocina, marketplace, proveedores, IA, Guatemala, comanda ya, comandaya app">
     <title>ComandaYa (Sitio Oficial) - Sistema de Gestión para Restaurantes</title>
     <meta name="google-site-verification" content="TKPYIwVj5YZbuNMTl-KE9QUnTvNcYD9EY6D5pOaw3Mg" />
+    <link rel="icon" href="logo-2.ico" type="image/x-icon">
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,11 +30,11 @@
                     <li><a href="#galeria">Galería</a></li>
                     <li><a href="#proveedores">Proveedores</a></li>
                     <li><a href="#contacto">Contacto</a></li>
-                    <li class="mobile-only"><a href="https://app.comandaya.com" target="_blank" rel="noopener noreferrer">Portal Web</a></li>
+                    <li class="mobile-only"><a href="/login">Portal Web</a></li>
                     <li class="mobile-only"><a href="https://play.google.com/store/apps/details?id=com.aplicacion.orderapp" target="_blank" rel="noopener noreferrer">Descargar App</a></li>
                 </ul>
                 <div class="nav-buttons">
-                    <a href="https://app.comandaya.com" target="_blank" rel="noopener noreferrer" class="cta-button-outline">Portal Web</a>
+                    <a href="/login" class="cta-button-outline">Portal Web</a>
                     <a href="https://play.google.com/store/apps/details?id=com.aplicacion.orderapp" target="_blank" rel="noopener noreferrer" class="cta-button">Descargar App</a>
                 </div>
                 <div class="hamburger" id="hamburger">
@@ -420,24 +421,14 @@
 
     <script src="script.js"></script>
     <script>
-    // Botón inteligente para proveedores
+    // Botón para proveedores
     (function() {
-        const providerId = localStorage.getItem('comandaya_provider_id');
-        const container  = document.getElementById('proveedorBtn');
+        const container = document.getElementById('proveedorBtn');
         if (!container) return;
-        if (providerId) {
-            container.innerHTML =
-                '<a href="/proveedor-registro.html?providerId=' + providerId + '" class="btn-proveedor-registered">' +
-                '📦 Ver mis productos en ComandaYa</a>' +
-                '<p class="proveedor-btn-note">Ya estás registrado en este dispositivo · Actualizá tus precios cuando quieras</p>';
-        } else {
-            container.innerHTML =
-                '<a href="/proveedor-registro.html" class="btn-proveedor-new">' +
-                '🛒 Registrarme como proveedor</a>' +
-                '<p class="proveedor-btn-note">Gratis · Solo necesitás tu celular</p>' +
-                '<a href="/proveedor-login.html" style="display:block;margin-top:10px;font-size:13px;color:#888;text-align:center;text-decoration:underline;">' +
-                'Ya tengo cuenta — Iniciar sesión</a>';
-        }
+        container.innerHTML =
+            '<a href="/proveedores" class="btn-proveedor-new">' +
+            '🛒 Portal de Proveedores</a>' +
+            '<p class="proveedor-btn-note">Registrate o ingresá con tu número de WhatsApp</p>';
     })();
     </script>
 </body>
