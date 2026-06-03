@@ -1,3 +1,23 @@
+// Barra de anuncio Shark Tank (cerrable, recordado por campaña)
+(function () {
+    const CAMPAIGN_KEY = 'stAnnouncementClosed';
+    const CAMPAIGN_ID = '2026-06-04'; // cambiar para reactivar/retirar la barra
+    const bar = document.getElementById('announcementBar');
+    const closeBtn = document.getElementById('announcementClose');
+    if (!bar) return;
+
+    if (localStorage.getItem(CAMPAIGN_KEY) === CAMPAIGN_ID) {
+        document.body.classList.remove('has-announcement');
+    }
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            document.body.classList.remove('has-announcement');
+            try { localStorage.setItem(CAMPAIGN_KEY, CAMPAIGN_ID); } catch (e) {}
+        });
+    }
+})();
+
 // Navigation Toggle for Mobile
 const hamburger = document.getElementById('hamburger');
 const navMenu = document.getElementById('navMenu');
@@ -46,7 +66,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         e.preventDefault();
         const target = document.querySelector(this.getAttribute('href'));
         if (target) {
-            const offset = 80; // Height of fixed navbar
+            // Offset = navbar fijo (+ barra de anuncio si está visible)
+            const offset = document.body.classList.contains('has-announcement') ? 130 : 90;
             const targetPosition = target.offsetTop - offset;
             window.scrollTo({
                 top: targetPosition,
@@ -56,28 +77,51 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Intersection Observer for Animations
+// Intersection Observer for Animations (revelado suave con efecto escalonado)
 const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -100px 0px'
+    threshold: 0.12,
+    rootMargin: '0px 0px -80px 0px'
 };
 
-const observer = new IntersectionObserver((entries) => {
+const EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
+
+const observer = new IntersectionObserver((entries, obs) => {
     entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
+        if (!entry.isIntersecting) return;
+        const el = entry.target;
+        const delay = parseInt(el.dataset.revealDelay || '0', 10);
+
+        setTimeout(() => {
+            el.style.opacity = '1';
+            el.style.transform = 'none';
+        }, delay);
+
+        // Limpia los estilos inline al terminar para no interferir con el hover
+        setTimeout(() => {
+            el.style.transition = '';
+            el.style.transform = '';
+        }, delay + 850);
+
+        obs.unobserve(el);
     });
 }, observerOptions);
 
-// Observe elements for animation
-const animatedElements = document.querySelectorAll('.diferenciador-card, .benefit-card, .testimonial-card, .gallery-item');
+// Elementos a animar
+const animatedElements = document.querySelectorAll(
+    '.diferenciador-card, .benefit-card, .testimonial-card, .gallery-item, .caracteristica-item, .pricing-card, .section-title, .section-subtitle'
+);
 animatedElements.forEach(el => {
     el.style.opacity = '0';
-    el.style.transform = 'translateY(30px)';
-    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    el.style.transform = 'translateY(40px)';
+    el.style.transition = 'opacity 0.7s ' + EASE + ', transform 0.7s ' + EASE;
     observer.observe(el);
+});
+
+// Efecto escalonado para elementos dentro de la misma cuadrícula
+document.querySelectorAll('.diferenciadores-grid, .benefits-grid, .testimonials-grid, .gallery-grid, .pricing-grid').forEach(grid => {
+    Array.from(grid.children).forEach((child, i) => {
+        child.dataset.revealDelay = i * 90;
+    });
 });
 
 // Counter Animation for Stats
@@ -183,6 +227,32 @@ window.addEventListener('scroll', () => {
         }
     });
 });
+
+// Reproductor vertical (reel) — click para reproducir con sonido
+(function () {
+    const container = document.getElementById('reelContainer');
+    const video = document.getElementById('reelVideo');
+    const playBtn = document.getElementById('reelPlay');
+    if (!container || !video) return;
+
+    const start = () => {
+        video.setAttribute('controls', '');
+        container.classList.add('playing');
+        video.play();
+    };
+
+    if (playBtn) playBtn.addEventListener('click', start);
+
+    video.addEventListener('play', () => container.classList.add('playing'));
+    video.addEventListener('pause', () => {
+        if (!video.ended) container.classList.remove('playing');
+    });
+    video.addEventListener('ended', () => {
+        container.classList.remove('playing');
+        video.removeAttribute('controls');
+        video.currentTime = 0;
+    });
+})();
 
 // Console welcome message
 console.log('%c¡Bienvenido a ComandaYa!', 'font-size: 20px; font-weight: bold; color: #FFC107;');

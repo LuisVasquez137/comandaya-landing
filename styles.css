@@ -16,6 +16,14 @@
     --text-light: #666666;
     --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.15);
+    /* Paleta temática "tanque" para campaña Shark Tank */
+    --tank-deep: #041625;
+    --tank-mid: #0a2540;
+    --tank-light: #11406b;
+    --tank-glow: #38bdf8;
+    --transition: all 0.3s ease;
+    --radius: 20px;
+    --ann-h: 48px;
 }
 
 html {
@@ -35,6 +43,125 @@ body {
     padding: 0 20px;
 }
 
+/* Barra de anuncio Shark Tank */
+.announcement-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1100;
+    background: linear-gradient(90deg, var(--tank-deep), var(--tank-mid) 45%, var(--tank-light));
+    color: var(--white);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+}
+
+.announcement-bar::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--tank-glow), var(--primary-yellow), transparent);
+    background-size: 200% 100%;
+    animation: announceShine 4s linear infinite;
+}
+
+@keyframes announceShine {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.announcement-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: var(--ann-h);
+    padding: 6px 44px 6px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    position: relative;
+}
+
+.announcement-text {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.95rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.announcement-emoji {
+    font-size: 1.15rem;
+}
+
+.announcement-date {
+    opacity: 0.85;
+    font-size: 0.85rem;
+}
+
+.announcement-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.announcement-link {
+    color: var(--primary-yellow);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+.announcement-link:hover {
+    text-decoration: underline;
+}
+
+.announcement-cta {
+    background: var(--primary-yellow);
+    color: var(--black);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.82rem;
+    padding: 6px 16px;
+    border-radius: 50px;
+    white-space: nowrap;
+    transition: var(--transition);
+}
+
+.announcement-cta:hover {
+    background: var(--dark-yellow);
+    transform: translateY(-1px);
+}
+
+.announcement-close {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: var(--white);
+    font-size: 1.6rem;
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+    padding: 0 4px;
+}
+
+.announcement-close:hover {
+    opacity: 1;
+}
+
+body:not(.has-announcement) .announcement-bar {
+    display: none;
+}
+
 /* Navigation */
 .navbar {
     position: fixed;
@@ -44,7 +171,11 @@ body {
     background: var(--white);
     box-shadow: var(--shadow);
     z-index: 1000;
-    transition: all 0.3s ease;
+    transition: top 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+body.has-announcement .navbar {
+    top: var(--ann-h);
 }
 
 .nav-wrapper {
@@ -158,9 +289,58 @@ body {
 /* Hero Section */
 .hero {
     position: relative;
-    background: linear-gradient(135deg, var(--primary-yellow) 0%, var(--dark-yellow) 100%);
+    background: linear-gradient(135deg, #FFD54F 0%, var(--primary-yellow) 45%, var(--dark-yellow) 100%);
     padding: 140px 0 100px;
     overflow: hidden;
+}
+
+/* Aura moderna detrás del contenido del hero */
+.hero::after {
+    content: '';
+    position: absolute;
+    top: -120px;
+    right: -120px;
+    width: 480px;
+    height: 480px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.55), transparent 65%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Badge Shark Tank en el hero */
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    color: var(--black);
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 8px 18px;
+    border-radius: 50px;
+    text-decoration: none;
+    margin-bottom: 1.25rem;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    transition: var(--transition);
+    animation: badgePulse 2.6s ease-in-out infinite;
+}
+
+.hero-badge:hover {
+    background: rgba(255, 255, 255, 0.6);
+    transform: translateY(-2px);
+}
+
+.hero-badge-emoji {
+    font-size: 1.1rem;
+}
+
+@keyframes badgePulse {
+    0%, 100% { box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12); }
+    50% { box-shadow: 0 6px 26px rgba(4, 22, 37, 0.35); }
 }
 
 .hero::before {
@@ -494,6 +674,50 @@ body {
     font-size: 1.2rem;
 }
 
+/* Reproductor vertical (reel) */
+.video-container.vertical {
+    max-width: 340px;
+    aspect-ratio: 9 / 16;
+    background: #000;
+    border-radius: 24px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: var(--shadow-lg);
+}
+
+.reel-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.reel-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    z-index: 2;
+}
+
+.reel-play svg {
+    filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.4));
+}
+
+.reel-play:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+.video-container.vertical.playing .reel-play {
+    opacity: 0;
+    pointer-events: none;
+}
+
 /* Características */
 .caracteristicas {
     padding: 100px 0;
@@ -583,12 +807,14 @@ body {
     padding: 2.5rem;
     border-radius: 20px;
     text-align: center;
-    transition: all 0.3s ease;
+    border: 1px solid #ececec;
+    transition: var(--transition);
 }
 
 .benefit-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow);
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-yellow);
 }
 
 .benefit-icon {
@@ -681,6 +907,13 @@ body {
     padding: 2.5rem;
     border-radius: 20px;
     box-shadow: var(--shadow);
+    border: 1px solid #ececec;
+    transition: var(--transition);
+}
+
+.testimonial-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
 }
 
 .stars {
@@ -778,6 +1011,18 @@ body {
     background: var(--white);
     color: var(--black);
     transform: translateY(-3px);
+}
+
+/* En el hero (fondo amarillo) el botón secundario va en negro para contrastar */
+.hero .btn-secondary-large {
+    color: var(--black);
+    border-color: var(--black);
+}
+
+.hero .btn-secondary-large:hover {
+    background: var(--black);
+    color: var(--white);
+    border-color: var(--black);
 }
 
 .cta-note {
@@ -1091,4 +1336,425 @@ body {
     .proveedores-content { flex-direction: column; gap: 32px; text-align: center; }
     .proveedores-list    { align-items: center; }
     .proveedores-text h2 { font-size: 1.6rem; }
+}
+
+/* ── Sección Shark Tank Guatemala ── */
+.sharktank {
+    position: relative;
+    padding: 150px 0 140px;
+    background: url('fondo_estanque.png') center center / cover no-repeat;
+    background-color: var(--tank-deep);
+    color: var(--white);
+    overflow: hidden;
+}
+
+body.has-announcement .sharktank {
+    padding-top: 198px;
+}
+
+/* Overlay oscuro para legibilidad sobre la foto del estanque */
+.sharktank-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background:
+        linear-gradient(110deg, rgba(4, 22, 37, 0.92) 0%, rgba(4, 22, 37, 0.65) 50%, rgba(4, 22, 37, 0.4) 100%),
+        linear-gradient(180deg, rgba(4, 22, 37, 0.3), rgba(4, 22, 37, 0.55));
+    pointer-events: none;
+}
+
+.sharktank .container {
+    position: relative;
+    z-index: 2;
+}
+
+/* Burbujas animadas */
+.sharktank-bubbles {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.sharktank-bubbles span {
+    position: absolute;
+    bottom: -60px;
+    width: 18px;
+    height: 18px;
+    background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.12) 60%, rgba(255, 255, 255, 0.04));
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 50%;
+    animation: bubbleRise 14s linear infinite;
+}
+
+.sharktank-bubbles span:nth-child(1)  { left: 6%;  width: 12px; height: 12px; animation-duration: 12s; animation-delay: 0s; }
+.sharktank-bubbles span:nth-child(2)  { left: 18%; width: 26px; height: 26px; animation-duration: 18s; animation-delay: 2s; }
+.sharktank-bubbles span:nth-child(3)  { left: 30%; width: 10px; height: 10px; animation-duration: 10s; animation-delay: 1s; }
+.sharktank-bubbles span:nth-child(4)  { left: 42%; width: 20px; height: 20px; animation-duration: 16s; animation-delay: 4s; }
+.sharktank-bubbles span:nth-child(5)  { left: 54%; width: 14px; height: 14px; animation-duration: 13s; animation-delay: 0.5s; }
+.sharktank-bubbles span:nth-child(6)  { left: 63%; width: 28px; height: 28px; animation-duration: 20s; animation-delay: 3s; }
+.sharktank-bubbles span:nth-child(7)  { left: 72%; width: 12px; height: 12px; animation-duration: 11s; animation-delay: 2.5s; }
+.sharktank-bubbles span:nth-child(8)  { left: 81%; width: 22px; height: 22px; animation-duration: 17s; animation-delay: 1.5s; }
+.sharktank-bubbles span:nth-child(9)  { left: 90%; width: 16px; height: 16px; animation-duration: 15s; animation-delay: 5s; }
+.sharktank-bubbles span:nth-child(10) { left: 96%; width: 10px; height: 10px; animation-duration: 9s;  animation-delay: 3.5s; }
+.sharktank-bubbles span:nth-child(11) { left: 12%; width: 16px; height: 16px; animation-duration: 19s; animation-delay: 6s; }
+.sharktank-bubbles span:nth-child(12) { left: 37%; width: 24px; height: 24px; animation-duration: 21s; animation-delay: 7s; }
+.sharktank-bubbles span:nth-child(13) { left: 67%; width: 14px; height: 14px; animation-duration: 14s; animation-delay: 4.5s; }
+.sharktank-bubbles span:nth-child(14) { left: 85%; width: 18px; height: 18px; animation-duration: 16s; animation-delay: 6.5s; }
+
+@keyframes bubbleRise {
+    0%   { transform: translateY(0) scale(1); opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 0.6; }
+    100% { transform: translateY(-110vh) scale(1.2); opacity: 0; }
+}
+
+.sharktank-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+.sharktank-logo {
+    max-width: 320px;
+    width: 100%;
+    height: auto;
+    display: block;
+    margin: 0.75rem 0 0.5rem;
+    filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.45));
+}
+
+.sharktank-heading {
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1.25rem;
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.sharktank-heading span {
+    color: var(--primary-yellow);
+}
+
+/* Onda inferior de la sección Shark Tank */
+.sharktank-wave {
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    line-height: 0;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.sharktank-wave svg {
+    width: 100%;
+    height: 90px;
+    display: block;
+}
+
+.sharktank-tag {
+    display: inline-block;
+    background: var(--primary-yellow);
+    color: var(--black);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 6px 14px;
+    border-radius: 50px;
+    margin-bottom: 1rem;
+}
+
+.sharktank-text h2 {
+    font-size: 2.6rem;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 1.25rem;
+}
+
+.sharktank-text p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 1rem;
+}
+
+.sharktank-when {
+    background: rgba(255, 255, 255, 0.08);
+    border-left: 3px solid var(--primary-yellow);
+    padding: 12px 16px;
+    border-radius: 8px;
+}
+
+.sharktank-when strong {
+    color: var(--white);
+}
+
+.sharktank-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.75rem;
+    flex-wrap: wrap;
+}
+
+.btn-tank, .btn-tank-outline {
+    padding: 14px 30px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: var(--transition);
+    display: inline-block;
+}
+
+.btn-tank {
+    background: var(--primary-yellow);
+    color: var(--black);
+}
+
+.btn-tank:hover {
+    background: var(--dark-yellow);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(255, 193, 7, 0.35);
+}
+
+.btn-tank-outline {
+    background: transparent;
+    color: var(--white);
+    border: 2px solid rgba(255, 255, 255, 0.6);
+}
+
+.btn-tank-outline:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--white);
+    transform: translateY(-3px);
+}
+
+.sharktank-image img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    border: 4px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45);
+}
+
+/* Variante: logo (sin marco de foto) */
+.sharktank-image.is-logo {
+    display: flex;
+    justify-content: center;
+}
+
+.sharktank-image.is-logo img {
+    width: auto;
+    max-width: 100%;
+    max-height: 360px;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    filter: drop-shadow(0 12px 30px rgba(0, 0, 0, 0.4));
+    animation: float 4s ease-in-out infinite;
+}
+
+@media (max-width: 968px) {
+    .sharktank-content {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+        text-align: center;
+    }
+    .sharktank-buttons { justify-content: center; }
+    .sharktank-text h2 { font-size: 2rem; }
+    .sharktank-when { text-align: left; }
+}
+
+/* ── Responsive barra de anuncio ── */
+@media (max-width: 768px) {
+    :root { --ann-h: 64px; }
+    .announcement-inner {
+        flex-direction: column;
+        gap: 6px;
+        padding: 8px 40px;
+    }
+    .announcement-date { width: 100%; text-align: center; }
+    .announcement-link { display: none; }
+    body.has-announcement .sharktank { padding-top: 210px; }
+}
+
+/* ── Precios ── */
+.pricing {
+    padding: 100px 0;
+    background: var(--white);
+}
+
+.pricing-trial {
+    max-width: 760px;
+    margin: 0 auto 3.5rem;
+    text-align: center;
+    background: linear-gradient(135deg, #FFF3CD, #FFE69A);
+    border: 1px solid var(--primary-yellow);
+    color: var(--black);
+    font-size: 1.05rem;
+    padding: 16px 24px;
+    border-radius: 14px;
+}
+
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    align-items: stretch;
+}
+
+.pricing-card {
+    background: var(--white);
+    border: 2px solid #e6e6e6;
+    border-radius: var(--radius);
+    padding: 2.5rem 2rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    transition: var(--transition);
+}
+
+.pricing-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-yellow);
+}
+
+.pricing-card.featured {
+    border-color: var(--primary-yellow);
+    box-shadow: 0 20px 50px rgba(255, 193, 7, 0.25);
+    transform: scale(1.04);
+    position: relative;
+}
+
+.pricing-card.featured:hover {
+    transform: scale(1.04) translateY(-8px);
+}
+
+.pricing-badge {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--primary-yellow);
+    color: var(--black);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 6px 16px;
+    border-radius: 50px;
+    white-space: nowrap;
+}
+
+.pricing-name {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--black);
+    margin-bottom: 0.5rem;
+}
+
+.pricing-desc {
+    color: var(--text-light);
+    font-size: 0.95rem;
+    min-height: 48px;
+    margin-bottom: 1.25rem;
+}
+
+.pricing-price {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 0.5rem;
+}
+
+.pricing-amount {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: var(--black);
+    line-height: 1;
+}
+
+.pricing-period {
+    color: var(--text-light);
+    font-size: 1rem;
+}
+
+.pricing-annual {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-bottom: 1.75rem;
+}
+
+.pricing-annual strong {
+    color: var(--black);
+}
+
+.pricing-annual span {
+    display: block;
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+.pricing-btn {
+    margin-top: auto;
+    display: inline-block;
+    background: var(--black);
+    color: var(--white);
+    font-weight: 700;
+    padding: 14px 24px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.pricing-btn:hover {
+    background: var(--dark-gray);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.pricing-card.featured .pricing-btn {
+    background: var(--primary-yellow);
+    color: var(--black);
+}
+
+.pricing-card.featured .pricing-btn:hover {
+    background: var(--dark-yellow);
+}
+
+.pricing-note {
+    text-align: center;
+    color: var(--text-light);
+    margin-top: 2.5rem;
+    font-size: 1rem;
+}
+
+@media (max-width: 968px) {
+    .pricing-grid {
+        grid-template-columns: 1fr;
+        max-width: 420px;
+        margin: 0 auto;
+    }
+    .pricing-card.featured {
+        transform: scale(1);
+    }
+    .pricing-card.featured:hover {
+        transform: translateY(-8px);
+    }
+}
+
+/* Respeta usuarios con movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+    .sharktank-bubbles span,
+    .announcement-bar::after,
+    .hero-badge,
+    .sharktank-image.is-logo img,
+    .phone-mockup {
+        animation: none;
+    }
 }

@@ -12,9 +12,26 @@
     <link rel="apple-touch-icon" href="logo-2.png?v=3">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 
-<body>
+<body class="has-announcement">
+    <!-- Barra de anuncio Shark Tank -->
+    <div class="announcement-bar" id="announcementBar">
+        <div class="announcement-inner">
+            <span class="announcement-text">
+                <span class="announcement-emoji">🦈</span>
+                <strong>¡ComandaYa en Shark Tank Guatemala!</strong>
+                <span class="announcement-date">Jueves 4 de junio · 8:00 PM · Guatemala.com</span>
+            </span>
+            <span class="announcement-actions">
+                <a href="#sharktank" class="announcement-link">Ver más</a>
+                <a href="https://wa.me/50234749466?text=Hola,%20los%20vi%20en%20Shark%20Tank%20y%20me%20interesa%20ComandaYa" target="_blank" rel="noopener noreferrer" class="announcement-cta">Quiero ComandaYa</a>
+            </span>
+            <button class="announcement-close" id="announcementClose" aria-label="Cerrar anuncio">&times;</button>
+        </div>
+    </div>
+
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
@@ -26,6 +43,7 @@
                 <ul class="nav-menu" id="navMenu">
                     <li><a href="#inicio">Inicio</a></li>
                     <li><a href="#caracteristicas">Características</a></li>
+                    <li><a href="#precios">Precios</a></li>
                     <li><a href="#video">Demo</a></li>
                     <li><a href="#galeria">Galería</a></li>
                     <li><a href="#proveedores">Proveedores</a></li>
@@ -46,11 +64,52 @@
         </div>
     </nav>
 
+    <!-- Sección Shark Tank Guatemala -->
+    <section class="sharktank" id="sharktank">
+        <div class="sharktank-overlay" aria-hidden="true"></div>
+        <div class="sharktank-bubbles" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span>
+        </div>
+        <div class="container">
+            <div class="sharktank-content">
+                <div class="sharktank-text">
+                    <span class="sharktank-tag">🦈 Estreno · Jueves 4 de junio · 8:00 PM</span>
+                    <h2 class="sharktank-heading">Llegamos a <span>Shark Tank Guatemala</span></h2>
+                    <p>
+                        Subimos al tanque para presentar ante los inversionistas la plataforma todo-en-uno
+                        con Inteligencia Artificial que está revolucionando la gestión de restaurantes en Guatemala.
+                    </p>
+                    <p class="sharktank-when">
+                        📺 Estreno este <strong>jueves 4 de junio a las 8:00 PM</strong> por
+                        <strong>Guatemala.com</strong> — y luego disponible en YouTube.
+                    </p>
+                    <div class="sharktank-buttons">
+                        <a href="https://www.guatemala.com/sharktank" target="_blank" rel="noopener noreferrer" class="btn-tank">Ver el estreno</a>
+                        <a href="https://wa.me/50234749466?text=Hola,%20los%20vi%20en%20Shark%20Tank%20y%20me%20interesa%20ComandaYa" target="_blank" rel="noopener noreferrer" class="btn-tank-outline">Solicitar demo por WhatsApp</a>
+                    </div>
+                </div>
+                <div class="sharktank-image is-logo">
+                    <img src="logo_blanco_vertical.png" alt="Shark Tank Guatemala 2">
+                </div>
+            </div>
+        </div>
+        <div class="sharktank-wave" aria-hidden="true">
+            <svg viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 60L60 50C120 40 240 20 360 26.7C480 33 600 67 720 73.3C840 80 960 60 1080 50C1200 40 1320 40 1380 40L1440 40V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0V60Z" fill="#FFD54F"/>
+            </svg>
+        </div>
+    </section>
+
     <!-- Hero Section -->
     <section class="hero" id="inicio">
         <div class="container">
             <div class="hero-content">
                 <div class="hero-text">
+                    <a href="#sharktank" class="hero-badge">
+                        <span class="hero-badge-emoji">🦈</span> Visto en Shark Tank Guatemala
+                    </a>
                     <h1 class="hero-title">
                         Gestiona tu restaurante con <span class="highlight">Inteligencia Artificial</span>
                     </h1>
@@ -59,7 +118,7 @@
                         Toma de pedidos, control de cocina y marketplace inteligente en una sola app.
                     </p>
                     <div class="hero-buttons">
-                        <a href="https://play.google.com/store/apps/details?id=com.aplicacion.orderapp" target="_blank" rel="noopener noreferrer" class="btn-primary">Descargar Ahora</a>
+                        <a href="https://play.google.com/store/apps/details?id=com.aplicacion.orderapp" target="_blank" rel="noopener noreferrer" class="btn-primary">Descargar Gratis</a>
                        <a href="https://wa.me/50234749466?text=Hola,%20me%20interesa%20ComandaYa" target="_blank" class="btn-secondary-large">Solicitar Demo por WhatsApp</a>
                     </div>
                     <div class="hero-stats">
@@ -79,7 +138,7 @@
                 </div>
                 <div class="hero-image">
                     <div class="phone-mockup">
-                        <img src="screenshot_orden.png" alt="ComandaYa App" class="app-screenshot">
+                        <img src="imagen_principal.jpg" alt="ComandaYa - Toda la información de tu restaurante desde 1 sola app" class="app-screenshot">
                     </div>
                 </div>
             </div>
@@ -127,8 +186,8 @@
                             <polyline points="12 6 12 12 16 14"/>
                         </svg>
                     </div>
-                    <h3>Tiempos en Tiempo Real</h3>
-                    <p>Sistema inteligente que calcula y muestra tiempos de preparación exactos. Tu cocina siempre sincronizada, tus clientes siempre informados.</p>
+                    <h3>Comanda a Cocina en Tiempo Real</h3>
+                    <p>Los sistemas tradicionales solo imprimen el pedido. ComandaYa envía la comanda directo a la pantalla de cocina en otro dispositivo y mide cuánto tarda cada platillo en prepararse.</p>
                 </div>
             </div>
         </div>
@@ -138,21 +197,19 @@
     <section class="video-section" id="video">
         <div class="container">
             <h2 class="section-title">Mira ComandaYa en acción</h2>
-            <p class="section-subtitle">Descubre cómo funciona en menos de 2 minutos</p>
-            
-            <div class="video-container">
-                <a href="https://www.youtube.com/watch?v=a_PVqAfoIj0" target="_blank" rel="noopener noreferrer" class="video-thumbnail">
-                    <img src="https://img.youtube.com/vi/a_PVqAfoIj0/maxresdefault.jpg" alt="ComandaYa Demo Video" class="video-img">
-                    <div class="play-button">
-                        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-                            <circle cx="40" cy="40" r="40" fill="rgba(255, 193, 7, 0.95)"/>
-                            <path d="M32 25L57 40L32 55V25Z" fill="#1a1a1a"/>
-                        </svg>
-                    </div>
-                    <div class="video-overlay">
-                        <span class="video-text">▶ Ver Demo en YouTube</span>
-                    </div>
-                </a>
+            <p class="section-subtitle">Míralo en acción en 25 segundos</p>
+
+            <div class="video-container vertical" id="reelContainer">
+                <video class="reel-video" id="reelVideo" playsinline preload="none" poster="en_accion_poster.jpg">
+                    <source src="en_accion_web.mp4" type="video/mp4">
+                    Tu navegador no soporta video HTML5.
+                </video>
+                <button class="reel-play" id="reelPlay" aria-label="Reproducir video">
+                    <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                        <circle cx="40" cy="40" r="40" fill="rgba(255, 193, 7, 0.95)"/>
+                        <path d="M32 25L57 40L32 55V25Z" fill="#1a1a1a"/>
+                    </svg>
+                </button>
             </div>
         </div>
     </section>
@@ -165,7 +222,7 @@
             <div class="caracteristicas-grid">
                 <div class="caracteristica-item">
                     <div class="feature-image">
-                        <img src="screenshot_orden.png" alt="Toma de pedidos">
+                        <img src="screenshot_home.png" alt="Toma de pedidos">
                     </div>
                     <div class="feature-content">
                         <h3>Toma de Pedidos Inteligente</h3>
@@ -181,7 +238,7 @@
 
                 <div class="caracteristica-item reverse">
                     <div class="feature-image">
-                        <img src="screenshot_home.png" alt="Control de cocina">
+                        <img src="screenshot_orden.jpg" alt="Control de cocina">
                     </div>
                     <div class="feature-content">
                         <h3>Control Total de tu Cocina</h3>
@@ -275,7 +332,7 @@
                 </div>
                 
                 <div class="gallery-item">
-                    <img src="screenshot_orden.png" alt="Nueva orden">
+                    <img src="screenshot_orden.jpg" alt="Nueva orden">
                     <div class="gallery-overlay">
                         <h4>Toma de Pedidos</h4>
                         <p>Interfaz rápida e intuitiva</p>
@@ -326,6 +383,56 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- Precios -->
+    <section class="pricing" id="precios">
+        <div class="container">
+            <h2 class="section-title">Planes para cada tipo de negocio</h2>
+            <p class="section-subtitle">Restaurante, pizzería, taquería, cafetería, crepería y más</p>
+
+            <div class="pricing-trial">
+                🎉 <strong>10 días de prueba TOTALMENTE GRATIS</strong> — si no te convence, no pagas nada. Sin tarjeta.
+            </div>
+
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3 class="pricing-name">Básico</h3>
+                    <p class="pricing-desc">Ideal para empezar a digitalizar tu negocio</p>
+                    <div class="pricing-price">
+                        <span class="pricing-amount">Q175</span>
+                        <span class="pricing-period">/ mes</span>
+                    </div>
+                    <p class="pricing-annual">o <strong>Q99/mes</strong> pagando anual <span>(Q1,188/año)</span></p>
+                    <a href="https://wa.me/50234749466?text=Hola,%20me%20interesa%20el%20plan%20B%C3%A1sico%20de%20ComandaYa" target="_blank" rel="noopener noreferrer" class="pricing-btn">Empezar gratis</a>
+                </div>
+
+                <div class="pricing-card featured">
+                    <div class="pricing-badge">Más popular</div>
+                    <h3 class="pricing-name">Pro</h3>
+                    <p class="pricing-desc">El equilibrio perfecto para crecer</p>
+                    <div class="pricing-price">
+                        <span class="pricing-amount">Q275</span>
+                        <span class="pricing-period">/ mes</span>
+                    </div>
+                    <p class="pricing-annual">o <strong>Q199/mes</strong> pagando anual <span>(Q2,388/año)</span></p>
+                    <a href="https://wa.me/50234749466?text=Hola,%20me%20interesa%20el%20plan%20Pro%20de%20ComandaYa" target="_blank" rel="noopener noreferrer" class="pricing-btn">Empezar gratis</a>
+                </div>
+
+                <div class="pricing-card">
+                    <h3 class="pricing-name">Premium</h3>
+                    <p class="pricing-desc">Para operaciones grandes y multi-sucursal</p>
+                    <div class="pricing-price">
+                        <span class="pricing-amount">Q425</span>
+                        <span class="pricing-period">/ mes</span>
+                    </div>
+                    <p class="pricing-annual">o <strong>Q350/mes</strong> pagando anual <span>(Q4,200/año)</span></p>
+                    <a href="https://wa.me/50234749466?text=Hola,%20me%20interesa%20el%20plan%20Premium%20de%20ComandaYa" target="_blank" rel="noopener noreferrer" class="pricing-btn">Empezar gratis</a>
+                </div>
+            </div>
+
+            <p class="pricing-note">Tecnología de las grandes cadenas, a un precio accesible para tu negocio.</p>
         </div>
     </section>
 
@@ -384,7 +491,7 @@
                     <ul>
                         <li><a href="#caracteristicas">Características</a></li>
                         <li><a href="#video">Demo</a></li>
-                        <li><a href="#">Precios</a></li>
+                        <li><a href="#precios">Precios</a></li>
                         <li><a href="#">FAQ</a></li>
                     </ul>
                 </div>
@@ -409,7 +516,7 @@
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2024 ComandaYa. Todos los derechos reservados.</p>
+                <p>&copy; 2026 ComandaYa. Todos los derechos reservados.</p>
                 <div class="social-links">
                     <a href="#" aria-label="Facebook">FB</a>
                     <a href="#" aria-label="Instagram">IG</a>
