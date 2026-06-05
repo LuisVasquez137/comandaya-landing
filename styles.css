@@ -252,8 +252,8 @@ body.has-announcement .navbar {
 
 .cta-button-outline {
     background: transparent;
-    color: var(--primary-yellow);
-    border: 2px solid var(--primary-yellow);
+    color: var(--black);
+    border: 2px solid var(--black);
     padding: 10px 28px;
     border-radius: 50px;
     font-weight: 600;
@@ -1434,6 +1434,7 @@ body.has-announcement .sharktank {
 }
 
 .sharktank-heading span {
+    display: block;
     color: var(--primary-yellow);
 }
 

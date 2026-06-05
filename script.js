@@ -1,7 +1,7 @@
 // Barra de anuncio Shark Tank (cerrable, recordado por campaña)
 (function () {
     const CAMPAIGN_KEY = 'stAnnouncementClosed';
-    const CAMPAIGN_ID = '2026-06-04'; // cambiar para reactivar/retirar la barra
+    const CAMPAIGN_ID = '2026-06-05-investment'; // cambiar para reactivar/retirar la barra
     const bar = document.getElementById('announcementBar');
     const closeBtn = document.getElementById('announcementClose');
     if (!bar) return;
